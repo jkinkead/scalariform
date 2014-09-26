@@ -65,7 +65,7 @@ object AllPreferences {
     PreserveSpaceBeforeArguments, AlignParameters, AlignArguments, DoubleIndentClassDeclaration, FormatXml, IndentPackageBlocks,
     AlignSingleLineCaseStatements, AlignSingleLineCaseStatements.MaxArrowIndent, IndentLocalDefs, PreserveDanglingCloseParenthesis,
     SpaceInsideParentheses, SpaceInsideBrackets, SpacesWithinPatternBinders, MultilineScaladocCommentsStartOnFirstLine, IndentWithTabs,
-    CompactControlReadability, PlaceScaladocAsterisksBeneathSecondAsterisk, SpacesAroundMultiImports)
+    CompactControlReadability, PlaceScaladocAsterisksBeneathSecondAsterisk, DoubleIndentMethodDeclaration, SpacesAroundMultiImports)
 
   val preferencesByKey: Map[String, PreferenceDescriptor[_]] = {
     var map: Map[String, PreferenceDescriptor[_]] = Map()
@@ -122,6 +122,12 @@ case object AlignArguments extends BooleanPreferenceDescriptor {
 case object DoubleIndentClassDeclaration extends BooleanPreferenceDescriptor {
   val key = "doubleIndentClassDeclaration"
   val description = "Double indent either a class's parameters or its inheritance list"
+  val defaultValue = false
+}
+
+case object DoubleIndentMethodDeclaration extends BooleanPreferenceDescriptor {
+  val key = "doubleIndentMethodDeclaration"
+  val description = "Double indent a method's parameters, if they span multiple lines"
   val defaultValue = false
 }
 

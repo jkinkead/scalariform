@@ -339,6 +339,29 @@ Or::
     def firstMethod = ...
   }
 
+doubleIndentMethodDeclaration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Default: ``false``
+
+With this set to ``true``, method declarations will have an extra indentation
+added to their parameter list, if it spans multiple lines.
+This provides a visual distinction from the method body. For example::
+
+  def longMethodNameIsLong(paramOneNameIsLong: String, paramTwo: String,
+      paramThreeNameIsReallyLong): Unit = {
+    val startOfMethod = ...
+  }
+
+Or::
+
+  def longMethodNameIsLong(
+      paramOneNameIsLong: String,
+      paramTwoNameIsLong: String,
+      paramThreeNameIsLong): Unit = {
+    val startOfMethod = ...
+  }
+
 formatXml
 ~~~~~~~~~
 

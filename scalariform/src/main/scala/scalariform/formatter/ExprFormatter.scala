@@ -927,7 +927,8 @@ trait ExprFormatter { self: HasFormattingPreferences with AnnotationFormatter wi
       returnTypeOpt: Option[(Token, Type)], funBodyOpt: Option[FunBody], localDef: Boolean) = funDefOrDcl
     for (typeParamClause ← typeParamClauseOpt)
       formatResult ++= format(typeParamClause.contents)
-    formatResult ++= formatParamClauses(paramClauses)
+    val doubleIndentParams = formattingPreferences(DoubleIndentMethodDeclaration)
+    formatResult ++= formatParamClauses(paramClauses, doubleIndentParams)
     for ((colon, type_) ← returnTypeOpt)
       formatResult ++= format(type_)
     for (funBody ← funBodyOpt) {
@@ -1139,7 +1140,8 @@ trait ExprFormatter { self: HasFormattingPreferences with AnnotationFormatter wi
       val secondArgument = firstTwoArguments.tail.head
       val firstArgument = firstTwoArguments.head
       if (hiddenPredecessors(secondArgument.firstToken).containsNewline) {
-        formatResult ++= formatResult.before(firstArgument.firstToken, paramFormatterState.nextIndentLevelInstruction)
+        formatResult ++=
+          formatResult.before(firstArgument.firstToken, paramFormatterState.indent(paramIndent).currentIndentLevelInstruction)
       }
     }
 
