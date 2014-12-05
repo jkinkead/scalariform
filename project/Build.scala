@@ -12,17 +12,18 @@ import xerial.sbt.Sonatype.SonatypeKeys._
 object ScalariformBuild extends Build {
 
    // This is to make sure nobody tries to compile with 1.6 as the target JDK.
-   // Not clear if this will actually work on 1.8, needs to be tested when that is out.
-   val specVersion = sys.props("java.specification.version")
    val mismatchedSpecificationMessage =
-   """|Java 1.7 is required for building Scalariform.
+   """|Java 1.7 or greater is required for building Scalariform.
       |
       |This is due to a dependency on the javax.swing library, which
       |had an API change from 1.6 to 1.7.
       |
       |Using 1.7 to build requires setting SBT to use JDK 1.7 or higher -- if SBT is
       |booting on JDK 1.6, you will get a javax.swing related compilation error.""".stripMargin
-   assert(specVersion == "1.7", mismatchedSpecificationMessage)
+   val MinorVersion = """\d+\.(\d+)""".r
+   sys.props("java.specification.version") match {
+     case MinorVersion(version) => assert(version.toInt >= 7, mismatchedSpecificationMessage)
+   }
 
   lazy val commonSettings = Defaults.defaultSettings ++ SbtScalariform.defaultScalariformSettings ++ sonatypeSettings ++ Seq(
     organization := "com.danieltrinh",
