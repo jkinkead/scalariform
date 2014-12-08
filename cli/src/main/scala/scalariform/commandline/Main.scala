@@ -1,21 +1,25 @@
 package scalariform.commandline
 
-import java.io.File
-import java.io.IOException
-import java.nio.charset._
-import scala.io.Source
-import scalariform.formatter.preferences._
-import scalariform.formatter.ScalaFormatter
-import scalariform.parser.ScalaParserException
-import scalariform.utils.Utils._
 import scalariform.ScalaVersions
+import scalariform.formatter.ScalaFormatter
+import scalariform.formatter.preferences._
+import scalariform.parser.ScalaParserException
+import scalariform.utils.Utils
+
+import scala.io.Source
+
+import java.io.{ File, IOException }
+import java.nio.charset.{ Charset, IllegalCharsetNameException, UnsupportedCharsetException }
 
 object Main {
-
   def main(args: Array[String]) {
     sys.exit(if (process(args)) 1 else 0)
   }
 
+  /** Run the main application.
+    * @return true if there were any errors in any files, or if there was a problem with the
+    * arguments
+    */
   def process(args: Array[String]): Boolean = {
 
     val parser = new CommandLineOptionParser
@@ -43,9 +47,9 @@ object Main {
       case Encoding(encoding) ⇒ encoding
     }.headOption.getOrElse(System getProperty "file.encoding")
 
-    try
+    try {
       Charset.forName(encoding)
-    catch {
+    } catch {
       case e: UnsupportedCharsetException ⇒
         errors ::= "Unsupported encoding " + encoding
       case e: IllegalCharsetNameException ⇒
@@ -56,9 +60,9 @@ object Main {
 
     arguments.collect {
       case PreferenceFile(path) ⇒
-        try
+        try {
           preferences = PreferencesImporterExporter.loadPreferences(path)
-        catch {
+        } catch {
           case e: IOException ⇒
             errors ::= "Error opening " + path + ": " + e.getMessage
         }
@@ -210,9 +214,7 @@ object Main {
     }
   }
 
-  /**
-   * @return true iff the source from stdin is formatted correctly
-   */
+  /** @return true iff the source from stdin is formatted correctly */
   private def checkSysIn(encoding: String, doFormat: String ⇒ Option[String]): Boolean = {
     val source = Source.fromInputStream(System.in, encoding)
     checkSource(source, doFormat) == FormattedCorrectly
@@ -256,11 +258,11 @@ object Main {
     val original = Source.fromFile(file, encoding).mkString
     doFormat(original) match {
       case Some(formatted) ⇒
-        if (formatted == original)
+        if (formatted == original) {
           log(".              " + file)
-        else {
+        } else {
           log("[Reformatted]  " + file)
-          writeText(file, formatted, Some(encoding))
+          Utils.writeText(file, formatted, Some(encoding))
         }
         false
       case None ⇒
@@ -271,8 +273,9 @@ object Main {
 
   private def transformFilesInPlace(files: Seq[File], encoding: String, doFormat: String ⇒ Option[String], log: String ⇒ Unit): Boolean = {
     var problems = false
-    for (file ← files)
+    for (file ← files) {
       problems &= transformFileInPlace(file, encoding, doFormat, log)
+    }
     problems
   }
 
@@ -354,5 +357,4 @@ object Main {
     println(" scalariform +rewriteArrowSymbols --test --recurse .")
     println(" echo 'class A ( n  :Int )' | scalariform --stdin")
   }
-
 }
