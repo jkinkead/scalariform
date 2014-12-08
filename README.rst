@@ -122,16 +122,6 @@ Or, if you don't like escaping spaces, you can set up a mapping: ::
 
 You can create your own executable scalariform.jar by following the instructions at the top of this file, in "Packaging an executable JAR."
 
-Command line tool
------------------
-
-  https://github.com/mdr/scalariform/wiki/Command-line-tool
-
-Library
--------
-
-  https://github.com/mdr/scalariform/wiki/Library
-
 Preferences
 -----------
 

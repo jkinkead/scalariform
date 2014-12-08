@@ -113,7 +113,7 @@ object ScalariformBuild extends Build {
 
   def pomExtraXml =
     <inceptionYear>2010</inceptionYear>
-    <url>http://github.com/mdr/scalariform</url>
+    <url>http://github.com/jkinkead/scalariform</url>
     <licenses>
       <license>
         <name>MIT License</name>
@@ -122,20 +122,24 @@ object ScalariformBuild extends Build {
       </license>
     </licenses>
     <scm>
-      <url>git@github.com:daniel-trinh/scalariform.git</url>
-      <connection>scm:git:git@github.com:daniel-trinh/scalariform</connection>
+      <url>git@github.com:jkinkead/scalariform.git</url>
+      <connection>scm:git:git@github.com:jkinkead/scalariform</connection>
     </scm>
     <developers>
       <developer>
-        <id>mdr</id>
-        <name>Matt Russell</name>
-        <url>https://github.com/mdr/</url>
+        <id>jkinkead</id>
+        <name>Jesse Kinkead</name>
+        <url>https://github.com/jkinkead/</url>
       </developer>
       <developer>
         <id>daniel-trinh</id>
         <name>Daniel Trinh</name>
         <url>https://github.com/daniel-trinh/</url>
       </developer>
+      <developer>
+        <id>mdr</id>
+        <name>Matt Russell</name>
+        <url>https://github.com/mdr/</url>
+      </developer>
     </developers>
-
 }
