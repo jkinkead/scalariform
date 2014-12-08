@@ -94,24 +94,28 @@ object Main {
       var files: List[File] = Nil
       def addFile(fileName: String) {
         val file = new File(fileName)
-        if (!file.exists)
+        if (!file.exists) {
           errors ::= "No such file " + file
-        if (file.isDirectory)
-          if (recurse)
+        }
+        if (file.isDirectory) {
+          if (recurse) {
             files :::= ScalaFileWalker.findScalaFiles(file)
-          else
+          } else {
             errors ::= "Cannot format a directory (" + file + ")"
-        else
+          }
+        } else {
           files ::= file
+        }
       }
       for (FileList(listName) ← arguments) {
         val listFile = new File(listName)
-        if (!listFile.exists)
+        if (!listFile.exists) {
           errors ::= "No such file: file list " + listFile
-        else if (listFile.isDirectory)
+        } else if (listFile.isDirectory) {
           errors ::= "Path is a directory: file list " + listFile
-        else
+        } else {
           Source.fromFile(listFile, encoding).getLines foreach addFile
+        }
       }
       for (FileName(fileName) ← arguments) addFile(fileName)
       files.reverse
@@ -125,23 +129,33 @@ object Main {
     val stdout = arguments contains Stdout
     val stdin = arguments contains Stdin
 
-    if (files.nonEmpty && stdin)
+    if (files.nonEmpty && stdin) {
       errors ::= "Cannot specify files when using --stdin"
+    }
 
-    if (files.isEmpty && !stdin)
-      errors ::= "Must specify a file or use --stdin (run with --help for full options)"
+    if (files.isEmpty && !stdin) {
+      if (recurse) {
+        errors ::= "No scala files found in directory or no directory specified"
+      } else {
+        errors ::= "Must specify a file or use --stdin (run with --help for full options)"
+      }
+    }
 
-    if (forceOutput && !stdout && !stdin)
+    if (forceOutput && !stdout && !stdin) {
       errors ::= "--forceOutput can only be used with --stdout or --stdin"
+    }
 
-    if (forceOutput && files.size > 1)
+    if (forceOutput && files.size > 1) {
       errors ::= "Cannot use --forceOutput with multiple files"
+    }
 
     if (!errors.isEmpty) {
-      for (error ← errors.reverse)
+      for (error ← errors.reverse) {
         System.err.println("Error: " + error)
-      if (showUsage)
+      }
+      if (showUsage) {
         printUsage()
+      }
       return true
     }
 
@@ -154,33 +168,36 @@ object Main {
     log("Assuming source is Scala " + scalaVersion)
 
     val preferencesText = preferences.preferencesMap.mkString(", ")
-    if (preferencesText == "")
+    if (preferencesText == "") {
       log("Formatting with default preferences.")
-    else
+    } else {
       log("Formatting with preferences: " + preferencesText)
+    }
 
     val doFormat: String ⇒ Option[String] = s ⇒
-      try
+      try {
         Some(ScalaFormatter.format(s, preferences, scalaVersion = scalaVersion))
-      catch {
+      } catch {
         case e: ScalaParserException ⇒ None
       }
 
-    if (test)
-      if (stdin)
+    if (test) {
+      if (stdin) {
         !checkSysIn(encoding, doFormat)
-      else
+      } else {
         !checkFiles(files, encoding, doFormat, log)
-    else {
-      if (stdin)
+      }
+    } else {
+      if (stdin) {
         transformSysInToSysOut(encoding, forceOutput, doFormat)
-      else
+      } else {
         files match {
           case List(file) if stdout ⇒
             transformFileToSysOut(file, encoding, forceOutput, doFormat)
           case _ ⇒
             transformFilesInPlace(files, encoding, doFormat, log)
         }
+      }
     }
   }
 
@@ -259,9 +276,7 @@ object Main {
     problems
   }
 
-  /**
-   * @return true iff file is already formatted correctly
-   */
+  /** @return true iff file is already formatted correctly */
   private def checkFile(file: File, encoding: String, doFormat: String ⇒ Option[String], log: String ⇒ Unit): Boolean = {
     val source = Source.fromFile(file, encoding)
     val formatResult = checkSource(source, doFormat)
@@ -272,17 +287,19 @@ object Main {
     }
     val padding = " " * (6 - resultString.length)
     log("[" + resultString + "]" + padding + " " + file)
-    formatResult != FormattedCorrectly
+    formatResult == FormattedCorrectly
   }
 
-  /**
-   * @return true iff all files are already formatted correctly
-   */
-  private def checkFiles(files: Seq[File], encoding: String, doFormat: String ⇒ Option[String], log: String ⇒ Unit): Boolean = {
-    var allPassed = true
-    for (file ← files)
-      allPassed &= checkFile(file, encoding, doFormat, log)
-    allPassed
+  /** @return true iff all files are already formatted correctly */
+  private def checkFiles(
+      files: Seq[File],
+      encoding: String,
+      doFormat: String ⇒ Option[String],
+      log: String ⇒ Unit
+  ): Boolean = {
+    files.foldLeft(true) { (allPassed, file) =>
+      allPassed && checkFile(file, encoding, doFormat, log)
+    }
   }
 
   private sealed trait FormatResult
