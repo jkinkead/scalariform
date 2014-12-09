@@ -56,6 +56,7 @@ if [ "$AUTOFORMAT" == "true" ]; then
     exit 1
   fi
   # Format all staged files, then exit with an error code if any have uncommitted changes.
+  echo 'Formatting staged scala files . . .'
   java -jar "$JAR" ${OPTIONS[@]} -q ${SCALA_FILES[@]}
   CHANGED_FILES=(`git diff --name-only ${SCALA_FILES[@]}`)
   if [ "$CHANGED_FILES" ]; then
@@ -70,6 +71,7 @@ if [ "$AUTOFORMAT" == "true" ]; then
     exit 0
   fi
 else
+  echo 'Checking for misformatted scala files . . .'
   # Get the list of misformatted files.
   MISFORMATTED=(
     `java -jar "$JAR" ${OPTIONS[@]} -q --showFilenames -t ${SCALA_FILES[@]} 2>&1`
