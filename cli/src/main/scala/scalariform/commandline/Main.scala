@@ -31,7 +31,8 @@ object Main {
     }
 
     if (arguments contains Version) {
-      println("Scalariform " + scalariform.BuildInfo.version + " (runtime Scala " + ScalaVersions.DEFAULT_VERSION + ")")
+      println("Version mismatch: Scalariform " + scalariform.BuildInfo.version +
+        " (runtime Scala " + ScalaVersions.DEFAULT_VERSION + ")")
       return false
     }
 
@@ -126,6 +127,7 @@ object Main {
     }
 
     val files = getFiles()
+    val showFilenames = arguments contains ShowFilenames
 
     val test = arguments contains Test
     val forceOutput = arguments contains ForceOutput
@@ -189,7 +191,14 @@ object Main {
       if (stdin) {
         !checkSysIn(encoding, doFormat)
       } else {
-        !checkFiles(files, encoding, doFormat, log)
+        val misformattedFiles = files.filter { (file) => !checkFile(file, encoding, doFormat, log) }
+        // Print the file path for each misformatted file, if appropriate.
+        if (showFilenames) {
+          for (file <- misformattedFiles) {
+            Console.err.println(file.getPath)
+          }
+        }
+        misformattedFiles.nonEmpty
       }
     } else {
       if (stdin) {
@@ -209,8 +218,8 @@ object Main {
     val original = source.mkString
     doFormat(original) match {
       case Some(`original`) ⇒ FormattedCorrectly
-      case Some(_)          ⇒ NotFormattedCorrectly
-      case None             ⇒ DidNotParse
+      case Some(_) ⇒ NotFormattedCorrectly
+      case None ⇒ DidNotParse
     }
   }
 
@@ -284,25 +293,13 @@ object Main {
     val source = Source.fromFile(file, encoding)
     val formatResult = checkSource(source, doFormat)
     val resultString = formatResult match {
-      case FormattedCorrectly    ⇒ "OK"
+      case FormattedCorrectly ⇒ "OK"
       case NotFormattedCorrectly ⇒ "FAILED"
-      case DidNotParse           ⇒ "ERROR"
+      case DidNotParse ⇒ "ERROR"
     }
     val padding = " " * (6 - resultString.length)
     log("[" + resultString + "]" + padding + " " + file)
     formatResult == FormattedCorrectly
-  }
-
-  /** @return true iff all files are already formatted correctly */
-  private def checkFiles(
-      files: Seq[File],
-      encoding: String,
-      doFormat: String ⇒ Option[String],
-      log: String ⇒ Unit
-  ): Boolean = {
-    files.foldLeft(true) { (allPassed, file) =>
-      allPassed && checkFile(file, encoding, doFormat, log)
-    }
   }
 
   private sealed trait FormatResult
@@ -325,6 +322,7 @@ object Main {
     println("  --stdin                              Read Scala source from standard input")
     println("  --stdout                             Write the formatted output to standard output")
     println("  --test, -t                           Check the input(s) to see if they are correctly formatted, return a non-zero error code if not.")
+    println("  --showFilenames                      In test mode, print the paths of all files with errors to stderr")
     println("  --version                            Show Scalariform version")
     println()
     println("Preferences:")
