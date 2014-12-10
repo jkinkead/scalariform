@@ -60,7 +60,7 @@ if [ "$AUTOFORMAT" == "true" ]; then
   java -jar "$JAR" ${OPTIONS[@]} -q ${SCALA_FILES[@]}
   CHANGED_FILES=(`git diff --name-only ${SCALA_FILES[@]}`)
   if [ "$CHANGED_FILES" ]; then
-    echo 'Some staged files were auto-formatted. Please review the changes and stage them.'
+    echo 'Some staged files were reformatted. Please review the changes and stage them.'
     echo
     echo 'Files updated:'
     for file in ${CHANGED_FILES[@]}; do
