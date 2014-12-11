@@ -61,11 +61,15 @@ trait IntegerPreferenceDescriptor extends PreferenceDescriptor[Int] {
 
 object AllPreferences {
   val preferences: List[PreferenceDescriptor[_]] = List(
-    RewriteArrowSymbols, IndentSpaces, SpaceBeforeColon, CompactStringConcatenation,
-    PreserveSpaceBeforeArguments, AlignParameters, AlignArguments, DoubleIndentClassDeclaration, FormatXml, IndentPackageBlocks,
-    AlignSingleLineCaseStatements, AlignSingleLineCaseStatements.MaxArrowIndent, IndentLocalDefs, PreserveDanglingCloseParenthesis,
-    SpaceInsideParentheses, SpaceInsideBrackets, SpacesWithinPatternBinders, MultilineScaladocCommentsStartOnFirstLine, IndentWithTabs,
-    CompactControlReadability, PlaceScaladocAsterisksBeneathSecondAsterisk, DoubleIndentMethodDeclaration, SpacesAroundMultiImports)
+    AlignArguments, AlignParameters, AlignSingleLineCaseStatements,
+    AlignSingleLineCaseStatements.MaxArrowIndent, CompactControlReadability,
+    CompactStringConcatenation, DoubleIndentClassDeclaration, DoubleIndentMethodDeclaration,
+    FormatComments, FormatXml, IndentLocalDefs, IndentPackageBlocks, IndentSpaces, IndentWithTabs,
+    MultilineScaladocCommentsStartOnFirstLine, PlaceScaladocAsterisksBeneathSecondAsterisk,
+    PreserveDanglingCloseParenthesis, PreserveSpaceBeforeArguments, RewriteArrowSymbols,
+    SpaceBeforeColon, SpaceInsideBrackets, SpaceInsideParentheses, SpacesAroundMultiImports,
+    SpacesWithinPatternBinders
+  )
 
   val preferencesByKey: Map[String, PreferenceDescriptor[_]] = {
     var map: Map[String, PreferenceDescriptor[_]] = Map()
@@ -73,7 +77,6 @@ object AllPreferences {
       map = map + (preference.key -> preference)
     map
   }
-
 }
 
 case object RewriteArrowSymbols extends BooleanPreferenceDescriptor {
@@ -191,6 +194,12 @@ case object SpacesWithinPatternBinders extends BooleanPreferenceDescriptor {
 case object MultilineScaladocCommentsStartOnFirstLine extends BooleanPreferenceDescriptor {
   val key = "multilineScaladocCommentsStartOnFirstLine"
   val description = "Start multiline Scaladoc comment body on same line as the opening '/**' "
+  val defaultValue = false
+}
+
+case object FormatComments extends BooleanPreferenceDescriptor {
+  val key = "formatComments"
+  val description = "Reformat comment paragraphs"
   val defaultValue = false
 }
 

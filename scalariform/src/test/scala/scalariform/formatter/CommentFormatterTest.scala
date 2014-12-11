@@ -40,7 +40,6 @@ class CommentFormatterTest extends AbstractFormatterTest {
     | *Wibble*/ 
     |class X""" ==>
   """/**
-    | *
     | * Wibble
     | */
     |class X"""
@@ -77,7 +76,18 @@ class CommentFormatterTest extends AbstractFormatterTest {
     |*
     |*/""" ==>
   """/**
-    | *
+    | */
+    |"""
+
+  """/**
+    | * Scaladoc should be retained.
+    | * @param first line no indent.
+    | *     second line has indent.
+    | */""" ==>
+  """/**
+    | * Scaladoc should be retained.
+    | * @param first line no indent.
+    | *     second line has indent.
     | */
     |"""
 
@@ -91,11 +101,23 @@ class CommentFormatterTest extends AbstractFormatterTest {
       
   // nested comments
   """/**
-    |/*
-    |*/
-    |*/""" ==>
+    |  /*
+    |  */
+    | */""" ==>
   """/**
     | * /*
+    | * */
+    | */
+    |"""
+
+  """/**
+    | * /*
+    | *    Nested comment.
+    | * */
+    | */""" ==>
+  """/**
+    | * /*
+    | *    Nested comment.
     | * */
     | */
     |"""
@@ -103,26 +125,37 @@ class CommentFormatterTest extends AbstractFormatterTest {
   {
   implicit val formattingPreferences = FormattingPreferences.setPreference(MultilineScaladocCommentsStartOnFirstLine, true)
 
-  """/** This method applies f to each 
-    | *  element of the given list.
+  """/** First line  (well-formatted)
+    | *  Second line (well-formatted)
     | */""" ==>
-  """/** This method applies f to each
-    | *  element of the given list.
+  """/** First line  (well-formatted)
+    | *  Second line (well-formatted)
     | */
     |""" 
 
-  """/** Foo
-    |Bar
-    |*Baz  */""" ==>
-  """/** Foo
-    | *  Bar
-    | *  Baz
+  """/**
+    | * Scaladoc should be retained.
+    | * @param first line changes indent.
+    | *     second line retains indent.
+    | */""" ==>
+  """/** Scaladoc should be retained.
+    | *  @param first line changes indent.
+    | *     second line retains indent.
     | */
     |"""
 
-  """/** Foo
+  """/** First
+    |Second line, no leader
+    |*Third line, comment ender  */""" ==>
+  """/** First
+    | *  Second line, no leader
+    | *  Third line, comment ender
+    | */
+    |"""
+
+  """/** Ending misaligned
     |*/""" ==>
-  """/** Foo
+  """/** Ending misaligned
     | */
     |"""
 
@@ -155,10 +188,10 @@ class CommentFormatterTest extends AbstractFormatterTest {
     |  */
     |"""
 
-  """/** Foo
+  """/** Line on start, should be on next line
     |*/""" ==>
   """/**
-    |  * Foo
+    |  * Line on start, should be on next line
     |  */
     |"""
 
@@ -181,6 +214,17 @@ class CommentFormatterTest extends AbstractFormatterTest {
     |  */
     |""" 
 
+  """/**
+    | * Scaladoc should be retained.
+    | * @param first line retains indent.
+    | *     second line retains indent.
+    | */""" ==>
+  """/** Scaladoc should be retained.
+    |  * @param first line retains indent.
+    |  *     second line retains indent.
+    |  */
+    |"""
+
   """/** Foo
     |Bar
     |*Baz  */""" ==>
@@ -190,9 +234,9 @@ class CommentFormatterTest extends AbstractFormatterTest {
     |  */
     |"""
 
-  """/** Foo
+  """/** Misaligned close
     |*/""" ==>
-  """/** Foo
+  """/** Misaligned close
     |  */
     |"""
 
