@@ -1,7 +1,6 @@
 package scalariform.formatter.preferences
 
 trait IFormattingPreferences {
-
   def apply[T](preference: PreferenceDescriptor[T]): T
 
   def setPreference[T](preference: PreferenceDescriptor[T], value: T): IFormattingPreferences
@@ -9,7 +8,6 @@ trait IFormattingPreferences {
   def preferencesMap: Map[PreferenceDescriptor[_], Any]
 
   def indentStyle: IndentStyle
-
 }
 
 abstract sealed class IndentStyle {
@@ -22,14 +20,13 @@ case object Tabs extends IndentStyle {
 }
 
 case class Spaces(n: Int) extends IndentStyle {
-
   def indent(indentLevel: Int) = repeat(repeat(" ", n), indentLevel)
 
   def length(indentLevel: Int) = indent(indentLevel).length
-
 }
 
-class FormattingPreferences(val preferencesMap: Map[PreferenceDescriptor[_], Any]) extends IFormattingPreferences {
+class FormattingPreferences(val preferencesMap: Map[PreferenceDescriptor[_], Any])
+    extends IFormattingPreferences {
 
   def apply[T](preference: PreferenceDescriptor[T]): T = preferencesMap.get(preference) map { _.asInstanceOf[T] } getOrElse preference.defaultValue
 
@@ -47,7 +44,5 @@ case object FormattingPreferences extends FormattingPreferences(Map()) {
 }
 
 trait HasFormattingPreferences {
-
   val formattingPreferences: IFormattingPreferences
-
 }

@@ -23,7 +23,15 @@ trait HasHiddenTokenInfo {
   def newlineBefore(node: AstNode): Boolean = newlineBefore(node.firstToken)
 }
 
-abstract class ScalaFormatter extends HasFormattingPreferences with TypeFormatter with AnnotationFormatter with ExprFormatter with HasHiddenTokenInfo with TemplateFormatter with XmlFormatter with CaseClauseFormatter with CommentFormatter {
+abstract class ScalaFormatter extends HasFormattingPreferences
+    with TypeFormatter
+    with AnnotationFormatter
+    with ExprFormatter
+    with HasHiddenTokenInfo
+    with TemplateFormatter
+    with XmlFormatter
+    with CaseClauseFormatter
+    with CommentFormatter {
 
   val newlineSequence: String
 
@@ -200,10 +208,11 @@ abstract class ScalaFormatter extends HasFormattingPreferences with TypeFormatte
                 builder.indent(commentIndentLevel, baseIndentOption)
                 builder.append(formatComment(hiddenToken, commentIndentLevel))
               case SingleLineComment(_) | MultiLineComment(_) ⇒
-                if (builder.atBeginningOfLine)
+                if (builder.atBeginningOfLine) {
                   builder.indent(commentIndentLevel, baseIndentOption)
-                else if (builder.atVisibleCharacter) // Separation from previous visible token
+                } else if (builder.atVisibleCharacter) { // Separation from previous visible token
                   builder.append(" ")
+                }
                 builder.write(hiddenToken)
               case Whitespace(token) ⇒
                 val newlineCount = token.text.count(_ == '\n')

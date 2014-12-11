@@ -1,11 +1,9 @@
 package scalariform.parser
 
-import scalariform.utils.CaseClassReflector
-import scalariform.utils.Range
 import scalariform.lexer.Token
+import scalariform.utils.{ CaseClassReflector, Range }
 
 sealed trait AstNode extends CaseClassReflector {
-
   def tokens: List[Token]
 
   def firstTokenOption: Option[Token] = tokens.headOption
@@ -258,7 +256,6 @@ case class CasePattern(caseToken: Token, pattern: Expr, guardOption: Option[Guar
 }
 
 case class CaseClauses(caseClauses: List[CaseClause]) extends AstNode {
-  //require(!caseClauses.isEmpty)
   lazy val tokens = flatten(caseClauses)
 }
 
@@ -338,7 +335,11 @@ case class EarlyDefs(earlyBody: TemplateBody, withOpt: Option[Token]) extends As
   lazy val tokens = flatten(earlyBody, withOpt)
 }
 
-case class Template(earlyDefsOpt: Option[EarlyDefs], templateParentsOpt: Option[TemplateParents], templateBodyOpt: Option[TemplateBody]) extends ExprElement {
+case class Template(
+  earlyDefsOpt: Option[EarlyDefs],
+  templateParentsOpt: Option[TemplateParents],
+  templateBodyOpt: Option[TemplateBody]
+) extends ExprElement {
   lazy val tokens = flatten(earlyDefsOpt, templateParentsOpt, templateBodyOpt)
 }
 

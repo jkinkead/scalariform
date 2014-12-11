@@ -8,14 +8,17 @@ import scala.collection.mutable.ListBuffer
 import scala.PartialFunction._
 
 class ScalaParser(tokens: Array[Token]) {
-
   private val logging: Boolean = false
 
   private val forgiving: Boolean = true
 
   import ScalaParser._
 
-  def safeParse[T](production: ⇒ T): Option[T] = try Some(production) catch { case e: ScalaParserException ⇒ None }
+  def safeParse[T](production: ⇒ T): Option[T] = try {
+    Some(production)
+  } catch {
+    case e: ScalaParserException ⇒ None
+  }
 
   require(!tokens.isEmpty) // at least EOF
 
@@ -1570,8 +1573,9 @@ class ScalaParser(tokens: Array[Token]) {
         val templateParents_ = templateParents()
         val templateBodyOpt_ = templateBodyOpt()
         Template(Some(EarlyDefs(templateBody_, Some(withToken))), Some(templateParents_), templateBodyOpt_)
-      } else
+      } else {
         Template(Some(EarlyDefs(templateBody_, withOpt = None)), templateParentsOpt = None, templateBodyOpt = None)
+      }
     } else {
       val templateParents_ = templateParents()
       val templateBodyOpt_ = templateBodyOpt()
@@ -1702,7 +1706,6 @@ class ScalaParser(tokens: Array[Token]) {
   private def localDef(): FullDefOrDcl = {
     val annotations_ = annotations(skipNewLines = true)
     val localModifiers_ = localModifiers()
-    // val modifierCondition = true // TODO: !!!!
 
     val defOrDcl_ = or(defOrDcl(localDef = true), tmplDef())
     FullDefOrDcl(annotations_, localModifiers_, defOrDcl_)

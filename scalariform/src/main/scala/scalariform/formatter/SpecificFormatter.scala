@@ -8,7 +8,6 @@ import scalariform.formatter.preferences._
 import scalariform.ScalaVersions
 
 trait SpecificFormatter {
-
   def debug = false
 
   type Result <: AstNode
