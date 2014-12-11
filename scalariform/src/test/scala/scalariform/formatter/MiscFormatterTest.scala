@@ -42,5 +42,4 @@ class MiscFormatterTest extends AbstractFormatterTest {
   type Result = FullDefOrDcl
 
   def format(formatter: ScalaFormatter, result: Result) = formatter.format(result)(FormatterState(indentLevel = 0))
-
 }

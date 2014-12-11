@@ -6,7 +6,6 @@ import FormatterDirectiveParser.getDirectives
 
 // format: +preserveSpaceBeforeArguments
 class FormatterDirectiveParserTest extends FlatSpec with ShouldMatchers {
-
   it should "parse formatter ON/OFF instructions" in {
     "format: ON " ==> ToggleFormatting(true)
     "format: OFF" ==> ToggleFormatting(false)
@@ -32,5 +31,4 @@ class FormatterDirectiveParserTest extends FlatSpec with ShouldMatchers {
       getDirectives(source) should be (expectedDirectives)
     }
   }
-
 }

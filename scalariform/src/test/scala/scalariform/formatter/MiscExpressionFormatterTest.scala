@@ -11,7 +11,6 @@ class MiscExpressionFormatterTest extends AbstractExpressionFormatterTest {
    "this" ==> "this"
    "super [ B ] . t" ==> "super[B].t"
    "E2 . super [ B ] . t" ==> "E2.super[B].t"
-   "1" ==> "1"
    "true" ==> "true"
    "2.345" ==> "2.345"
    "2 + 2" ==> "2 + 2"
@@ -131,7 +130,6 @@ class MiscExpressionFormatterTest extends AbstractExpressionFormatterTest {
    }
 
    "NEWLINE" ==> "NEWLINE"
-   "NEWLINES" ==> "NEWLINES"
 
    "\"\"\"triplequoted\"\"\"" ==> "\"\"\"triplequoted\"\"\""
 

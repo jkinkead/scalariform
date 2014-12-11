@@ -12,10 +12,8 @@ import org.scalatest.TestPendingException
 import scalariform.ScalaVersions
 
 abstract class AbstractFormatterTest extends FlatSpec with ShouldMatchers with SpecificFormatter {
-
-  def prettyPrint(s: String): String =
-    //s.replaceAll("\n", "↵\n").replaceAll("\t", "↦" ).replaceAll(" ", "▵")
-    s.replaceAll("\n", "¶\n").replaceAll("\t", "↦") //.replaceAll(" ", "▲")
+  /** Formats a string, showing tabs and newlines. */
+  def prettyPrint(s: String): String = s.replaceAll("\n", "¶\n").replaceAll("\t", "↦")
 
   implicit def string2FormatTest(s: String)(implicit formattingPreferences: IFormattingPreferences = FormattingPreferences(), scalaVersion: String = ScalaVersions.DEFAULT_VERSION): FormatTest =
     FormatTest(s.stripMargin, formattingPreferences, scalaVersion)
@@ -23,7 +21,6 @@ abstract class AbstractFormatterTest extends FlatSpec with ShouldMatchers with S
   def testFailedException(message: String) = new TestFailedException(message = Some(message), cause = None, failedCodeStackDepth = 2)
 
   case class FormatTest(source: String, formattingPreferences: IFormattingPreferences, scalaVersion: String) {
-
     require(formattingPreferences != null)
 
     def ==>(expectedRaw: String) {
@@ -51,13 +48,11 @@ abstract class AbstractFormatterTest extends FlatSpec with ShouldMatchers with S
     }
 
     def =/=>(expected: String): Because = {
-      //println("Warning -- skipped test:\n" + source)
       new Because(expected)
     }
 
     class Because(expected: String) {
       def because(reason: String) = {
-        //println("because " + reason)
         it should ("format >>>" + prettyPrint(source) + "<<< as >>>" + prettyPrint(expected) + "<<<, but did not because " + reason) in {
           throw new TestPendingException
         }

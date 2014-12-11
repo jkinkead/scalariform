@@ -6,7 +6,6 @@ import scalariform.formatter.preferences._
 
 // format: OFF
 class PackageFormatterTest extends AbstractFormatterTest {
-
   override val debug = false
 
   type Result = CompilationUnit
@@ -15,7 +14,7 @@ class PackageFormatterTest extends AbstractFormatterTest {
   
   def format(formatter: ScalaFormatter, result: Result) = formatter.format(result)(FormatterState())
 
-  "" ==> ""
+  "package foo" ==> "package foo"
 
   "package foo . bar . baz" ==> "package foo.bar.baz"
 
@@ -30,21 +29,9 @@ class PackageFormatterTest extends AbstractFormatterTest {
     |  }
     |}"""
 
-  "package foo" ==> "package foo"
-
-  """/* foo */
-    |package wibble""" ==>
-  """/* foo */
-    |package wibble"""
-
   """package a 
      |{}""" ==>
   """package a {}"""
-
-  """package a {}
-     |""" ==>
-  """package a {}
-     |"""
 
   {
 

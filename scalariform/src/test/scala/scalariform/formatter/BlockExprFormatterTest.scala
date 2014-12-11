@@ -5,9 +5,7 @@ import scalariform.formatter._
 
 // format: OFF
 class BlockExprFormatterTest extends AbstractExpressionFormatterTest {
-
-  override val debug = false
-
+  // Semicolons & indent are preserved if correct.
   """{ 
     |  a();
     |  b()
@@ -17,6 +15,7 @@ class BlockExprFormatterTest extends AbstractExpressionFormatterTest {
     |  b()
     |}"""
 
+  // Elements are spaced & indented correctly.
   """{
     |a;b;c;
     |d;e;f//Foo
@@ -32,6 +31,7 @@ class BlockExprFormatterTest extends AbstractExpressionFormatterTest {
     |  k
     |}"""
 
+  // Nested blocks are handled.
   """{
     |val x = { 
     |a()
@@ -110,5 +110,4 @@ class BlockExprFormatterTest extends AbstractExpressionFormatterTest {
     |}"""
 
   "{ ; a }" ==> "{ ; a }"
-
 }

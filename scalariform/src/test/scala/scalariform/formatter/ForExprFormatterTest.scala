@@ -5,9 +5,6 @@ import scalariform.formatter._
 
 // format: OFF
 class ForExprFormatterTest extends AbstractExpressionFormatterTest {
-
-//  override val debug = true
-
   "for (x <- xs) yield x" ==> "for (x <- xs) yield x"
 
   "for (x <- xs) println(x)" ==> "for (x <- xs) println(x)"

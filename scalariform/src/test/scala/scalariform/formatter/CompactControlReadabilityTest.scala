@@ -100,7 +100,4 @@ class CompactControlReadabilityTest extends AbstractExpressionFormatterTest {
   "if (y > 0) positive else if (y < 0) negative else zero" ==> "if (y > 0) positive else if (y < 0) negative else zero"
       
   "try x catch y finally z" ==> "try x catch y finally z"    
-      
-
-      
 }
