@@ -24,7 +24,14 @@ abstract class AbstractFormatterTest extends FlatSpec with ShouldMatchers with S
     require(formattingPreferences != null)
 
     def ==>(expectedRaw: String) {
-      it should ("format >>>" + prettyPrint(source) + "<<< as >>>" + prettyPrint(expectedRaw) + "<<< with preferences " + formattingPreferences + " in version " + scalaVersion) in {
+      val preferencesDescription = if (formattingPreferences.preferencesMap.isEmpty) {
+        "default preferences"
+      } else {
+        s"preferences ${formattingPreferences.preferencesMap}"
+      }
+      it should (s"format >>>${prettyPrint(source)}<<< correctly " +
+        s"with $preferencesDescription in scala version $scalaVersion"
+      ) in {
         val expected = expectedRaw.stripMargin
         val actual = format(source, scalaVersion = scalaVersion)(formattingPreferences)
         if (debug) println("Actual = " + actual)

@@ -20,7 +20,7 @@
 # formatting changes unstaged. Changed files will be printed.
 
 # Find all staged scala files, and exit early if there aren't any.
-SCALA_FILES=(`git diff --name-only --cached | grep '.scala$'`)
+SCALA_FILES=(`git diff --name-only --cached --diff-filter=AM | grep '.scala$'`)
 if [ ! "$SCALA_FILES" ]; then
   exit 0
 fi
