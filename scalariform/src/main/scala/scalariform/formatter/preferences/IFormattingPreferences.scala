@@ -7,22 +7,10 @@ trait IFormattingPreferences {
 
   def preferencesMap: Map[PreferenceDescriptor[_], Any]
 
+  /** The indent style configured by the user. If IndentWithTabs is set, Tabs is used; else, Spaces
+    * is used, with IndentSpaces spaces per indent level.
+    */
   def indentStyle: IndentStyle
-}
-
-abstract sealed class IndentStyle {
-  def indent(n: Int): String
-  protected def repeat(s: String, n: Int) = 1 to n map { _ ⇒ s } mkString
-}
-
-case object Tabs extends IndentStyle {
-  def indent(indentLevel: Int) = repeat("\t", indentLevel)
-}
-
-case class Spaces(n: Int) extends IndentStyle {
-  def indent(indentLevel: Int) = repeat(repeat(" ", n), indentLevel)
-
-  def length(indentLevel: Int) = indent(indentLevel).length
 }
 
 class FormattingPreferences(val preferencesMap: Map[PreferenceDescriptor[_], Any])
@@ -34,13 +22,11 @@ class FormattingPreferences(val preferencesMap: Map[PreferenceDescriptor[_], Any
 
   override def toString = getClass.getSimpleName + "(" + preferencesMap + ")"
 
-  val indentStyle = if (this(IndentWithTabs)) Tabs else Spaces(this(IndentSpaces))
+  override val indentStyle = if (this(IndentWithTabs)) Tabs else Spaces(this(IndentSpaces))
 }
 
 case object FormattingPreferences extends FormattingPreferences(Map()) {
-
   def apply() = new FormattingPreferences(Map())
-
 }
 
 trait HasFormattingPreferences {
