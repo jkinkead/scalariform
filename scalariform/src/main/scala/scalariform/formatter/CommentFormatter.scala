@@ -6,64 +6,91 @@ import scalariform.lexer._
 import scalariform.formatter.preferences._
 import scala.annotation.tailrec
 
+/** Formats multi-line comments - non-// comments. This will strip any empty lines at the start of
+  * the comment, add comment leaders to any lines missing them, and correct asterisk alignment if
+  * it's incorrect.
+  */
 trait CommentFormatter { self: HasFormattingPreferences with ScalaFormatter ⇒
+  /** A case class representing a comment.
+    * @param trimmedAfterStarText the text of the comment after the star, trimmed of whitespace
+    * @param leadingSpaceCount the number of literal spaces preceding the text, after any star. Zero
+    *     if there was no star.
+    */
+  case class Comment(trimmedAfterStarText: String, leadingSpaceCount: Int)
 
-  private def getLines(comment: String): (String, List[String]) = {
-    val prefix = List("/** ", "/**", "/* ", "/*").find(comment.startsWith).get
-    val (start, rest) = comment.splitAt(prefix.length)
-    val (contents, _) = rest.splitAt(rest.length - "*/".length)
-    val firstLine :: otherLines = contents.split("""\r?\n([ \t]*(\*(?!/))?)?""", Integer.MAX_VALUE).toList
-    val afterStarSpaces = if (formattingPreferences(MultilineScaladocCommentsStartOnFirstLine)) 2 else 1
-    val initialSpaces = firstLine takeWhile (_.isWhitespace)
-    val adjustedLines = dropInitialSpaces(firstLine, initialSpaces.size) :: (otherLines map { dropInitialSpaces(_, afterStarSpaces) })
-    //    val adjustedLines map { line ⇒ if (line startsWith "*/") "*" + line else line }
-    (start, adjustedLines)
+  val LineDelimiter = """\r?\n""".r
+
+  /** Matches a comment leader and contents. Includes newlines. */
+  val CommentContents = """(?s)(/\*\*?)(.*)\*/""".r
+  /** Special-case handling of a nested comment end. */
+  val NestedCommentEnd = """\s*(\*/.*)""".r
+  /** Matches a comment line that starts with whitespace and includes an asterisk. This captures the
+    * spaces after the asterisk, plus the main body contents.
+    */
+  val CommentWithStar = """\s*\*( *)(.*)""".r
+
+  /** Returns the contents of a comment string, as a sequence of comments, paired with the comment
+    * start sequence. This preserves empty lines. Each line has any leading whitespace, asterisk,
+    * and following whitespace trimmed, plus end-of-line whitespace stripped.
+    * This assumes multi-line comments, starting with / * or / **.
+    */
+  private def getComments(comment: String): (String, Seq[Comment]) = {
+    comment match {
+      case CommentContents(start, contents) =>
+        val comments = for (rawLine <- LineDelimiter.split(contents)) yield rawLine match {
+          case NestedCommentEnd(afterStar) => Comment(afterStar.trim, 0)
+          case CommentWithStar(spaces, afterStar) => Comment(afterStar.trim, spaces.length)
+          case noStar => Comment(rawLine.trim, 0)
+        }
+        (start, comments)
+      case _ => ("/**", Seq(Comment(comment, 0)))
+    }
   }
 
-  @tailrec
-  private def dropInitialSpaces(s: String, maxSpacesToDrop: Int): String =
-    if (maxSpacesToDrop > 0 && s.startsWith(" "))
-      dropInitialSpaces(s drop 1, maxSpacesToDrop - 1)
-    else
-      s
-
-  private def removeTrailingWhitespace(s: String) = s.reverse.dropWhile(_.isWhitespace).reverse
-
-  private def pruneEmptyInitial(lines: List[String]) = lines match {
-    case first :: rest if first.trim == "" ⇒ rest
-    case _                                 ⇒ lines
-  }
-
-  private def pruneEmptyFinal(lines: List[String]) = pruneEmptyInitial(lines.reverse).reverse
-
-  def formatComment(comment: HiddenToken, indentLevel: Int): String =
-    if (comment.rawText contains '\n') {
-      val sb = new StringBuilder
-      val (start, rawLines) = getLines(comment.rawText)
-
-      val lines = pruneEmptyFinal(pruneEmptyInitial(rawLines))
-
-      val alignBeneathSecondAsterisk = formattingPreferences(PlaceScaladocAsterisksBeneathSecondAsterisk)
+  def formatComment(commentToken: HiddenToken, indentLevel: Int): String = {
+    // Only format multi-line comments.
+    if (commentToken.rawText contains '\n') {
+      val alignBeneathSecondAsterisk =
+        formattingPreferences(PlaceScaladocAsterisksBeneathSecondAsterisk)
       val startOnFirstLine = formattingPreferences(MultilineScaladocCommentsStartOnFirstLine)
       val beforeStarSpaces = if (alignBeneathSecondAsterisk) "  " else " "
       val afterStarSpaces = if (startOnFirstLine && !alignBeneathSecondAsterisk) "  " else " "
-      sb.append(start.trim)
+
+      val (start, comments) = getComments(commentToken.rawText)
+      // Drop any leading empty lines.
+      val trimmedComments = comments dropWhile { _.trimmedAfterStarText.isEmpty }
+
+      // Start the comment with the same characters as we had originally.
+      val sb = new StringBuilder(start)
       var firstLine = true
-      for (line ← lines) {
-        val trimmedLine = removeTrailingWhitespace(line)
+      for (comment <- trimmedComments) {
         if (firstLine && startOnFirstLine) {
-          if (trimmedLine.nonEmpty)
-            sb.append(" ").append(trimmedLine)
+          sb.append(" ").append(comment.trimmedAfterStarText)
         } else {
           sb.append(newlineSequence).indent(indentLevel).append(beforeStarSpaces).append("*")
-          if (trimmedLine.nonEmpty)
-            sb.append(afterStarSpaces).append(trimmedLine)
+          if (comment.trimmedAfterStarText.nonEmpty) {
+            // Preserve whitespace after the star, but only if we're sure it's correct.
+            // TODO(jkinkead): This would be more accurate if it also checked the initial indent -
+            // that is, we should only correct the space after the asterisk if the space before the
+            // asterisk was wrong.
+            if (comment.leadingSpaceCount > 2) {
+              sb.append(" " * comment.leadingSpaceCount)
+            } else {
+              sb.append(afterStarSpaces)
+            }
+            sb.append(comment.trimmedAfterStarText)
+          }
         }
         firstLine = false
       }
-      sb.append(newlineSequence).indent(indentLevel).append(beforeStarSpaces).append("*/")
+      if (trimmedComments.nonEmpty && trimmedComments.last.trimmedAfterStarText == "") {
+        sb.append("/")
+      } else {
+        sb.append(newlineSequence).indent(indentLevel).append(beforeStarSpaces).append("*/")
+      }
       sb.toString
-    } else
-      comment.rawText
-
+    } else {
+      commentToken.rawText
+    }
+  }
 }
