@@ -42,7 +42,7 @@ OPTIONS=(
 AUTOFORMAT=$(git config --bool hooks.autoformat)
 
 # Autoformat, if configured to do so.
-if [ "$AUTOFORMAT" == "true" ]; then
+if [ "$AUTOFORMAT" != "false" ]; then
   # Check for unstaged changes to files in the index.
   CHANGED_FILES=(`git diff --name-only ${SCALA_FILES[@]}`)
   if [ "$CHANGED_FILES" ]; then
