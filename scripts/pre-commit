@@ -20,7 +20,7 @@
 # formatting changes unstaged. Changed files will be printed.
 
 # Find all staged scala files, and exit early if there aren't any.
-SCALA_FILES=(`git diff --name-only --cached --diff-filter=AM | grep '.scala$'`)
+SCALA_FILES=(`git diff --name-only --cached --diff-filter=AM | grep --color=never '.scala$'`)
 if [ ! "$SCALA_FILES" ]; then
   exit 0
 fi
@@ -33,11 +33,7 @@ if [ ! -e $JAR ]; then
 fi
 
 # The formatting options we change from the defaults.
-OPTIONS=(
-  +doubleIndentClassDeclaration
-  +multilineScaladocCommentsStartOnFirstLine
-  +placeScaladocAsterisksBeneathSecondAsterisk
-)
+OPTIONS=(+doubleIndentClassDeclaration)
 
 AUTOFORMAT=$(git config --bool hooks.autoformat)
 
