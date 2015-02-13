@@ -12,9 +12,9 @@ case object BooleanPreference extends PreferenceType[Boolean] {
 
   def parseValue(s: String) =
     s.toLowerCase match {
-      case "true"  ⇒ Right(true)
+      case "true" ⇒ Right(true)
       case "false" ⇒ Right(false)
-      case _       ⇒ Left("Could not parse as boolean value: " + s)
+      case _ ⇒ Left("Could not parse as boolean value: " + s)
     }
 
 }
@@ -65,7 +65,8 @@ object AllPreferences {
     PreserveSpaceBeforeArguments, AlignParameters, AlignArguments, DoubleIndentClassDeclaration, FormatXml, IndentPackageBlocks,
     AlignSingleLineCaseStatements, AlignSingleLineCaseStatements.MaxArrowIndent, IndentLocalDefs, PreserveDanglingCloseParenthesis,
     SpaceInsideParentheses, SpaceInsideBrackets, SpacesWithinPatternBinders, MultilineScaladocCommentsStartOnFirstLine, IndentWithTabs,
-    CompactControlReadability, PlaceScaladocAsterisksBeneathSecondAsterisk, DoubleIndentMethodDeclaration, SpacesAroundMultiImports)
+    CompactControlReadability, PlaceScaladocAsterisksBeneathSecondAsterisk, DoubleIndentMethodDeclaration, SpacesAroundMultiImports
+  )
 
   val preferencesByKey: Map[String, PreferenceDescriptor[_]] = {
     var map: Map[String, PreferenceDescriptor[_]] = Map()
@@ -191,7 +192,7 @@ case object SpacesWithinPatternBinders extends BooleanPreferenceDescriptor {
 case object MultilineScaladocCommentsStartOnFirstLine extends BooleanPreferenceDescriptor {
   val key = "multilineScaladocCommentsStartOnFirstLine"
   val description = "Start multiline Scaladoc comment body on same line as the opening '/**' "
-  val defaultValue = false
+  val defaultValue = true
 }
 
 case object IndentWithTabs extends BooleanPreferenceDescriptor {
@@ -209,7 +210,7 @@ case object CompactControlReadability extends BooleanPreferenceDescriptor {
 case object PlaceScaladocAsterisksBeneathSecondAsterisk extends BooleanPreferenceDescriptor {
   val key = "placeScaladocAsterisksBeneathSecondAsterisk"
   val description = "Place Scaladoc asterisks beneath the second asterisk in the opening '/**', as opposed to the first"
-  val defaultValue = false
+  val defaultValue = true
 }
 
 case object SpacesAroundMultiImports extends BooleanPreferenceDescriptor {
