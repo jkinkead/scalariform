@@ -13,6 +13,22 @@ object ScalariformPlugin extends AutoPlugin {
     lazy val scalariformPreferences = settingKey[IFormattingPreferences](
       "The Scalariform preferences to use in formatting."
     )
+
+    /** Adds autoformatting in the given Configuration. Useful in particular for adding integration
+      * test formatting.
+      */
+    def addFormatTo(config: Configuration): Seq[Def.Setting[_]] = {
+      inConfig(config)(baseScalariformSettings) ++
+        Seq(
+          compileInputs in (config, compile) := {
+            ((compileInputs in (config, compile)) dependsOn (formatCheck in config)).value
+          },
+          // Re-configure root-level tasks to perform (compile, test) tasks in-order.
+          format := serialify(format, (format in config)).value,
+          formatCheck := serialifyCombine(formatCheck, (formatCheck in config)).value,
+          formatCheckStrict := serialify(formatCheckStrict, (formatCheckStrict in config)).value
+        )
+    }
   }
   import autoImport._
 
