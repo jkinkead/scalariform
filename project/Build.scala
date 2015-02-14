@@ -21,8 +21,7 @@ object ScalariformBuild extends Build {
 
   lazy val commonSettings = Defaults.defaultSettings ++ sonatypeSettings ++ Seq(
     organization := "com.github.jkinkead",
-    profileName := "com.github.jkinkead",
-    version := "0.1.6-SNAPSHOT",
+    version := "0.1.6",
     scalaVersion := "2.10.4",
     crossScalaVersions := Seq("2.11.0", "2.10.4"),
     exportJars := true, // Needed for cli oneJar
@@ -96,6 +95,12 @@ object ScalariformBuild extends Build {
     settings = commonSettings ++ Seq(
     name := "sbt-scalariform",
     sbtPlugin := true,
+    pomExtra := pluginExtraXml,
+    publishMavenStyle := true,
+    publishArtifact in Test := false,
+    publishArtifact in (Compile, packageDoc) := true,
+    publishArtifact in (Compile, packageSrc) := true,
+    pomIncludeRepository := { _ ⇒ false },
     publishTo <<= isSnapshot(getPublishToRepo)
   )).dependsOn(scalariform)
 
@@ -109,6 +114,29 @@ object ScalariformBuild extends Build {
       publishLocal := (),
       mainClass in (Compile, run) := Some("scalariform.gui.Main")
     )) dependsOn (scalariform, cli)
+
+  def pluginExtraXml = {
+    <inceptionYear>2015</inceptionYear>
+    <url>http://github.com/jkinkead/scalariform/sbt-plugin</url>
+    <licenses>
+      <license>
+        <name>MIT License</name>
+        <url>http://www.opensource.org/licenses/mit-license.php</url>
+        <distribution>repo</distribution>
+      </license>
+    </licenses>
+    <scm>
+      <url>git@github.com:jkinkead/scalariform.git</url>
+      <connection>scm:git:git@github.com:jkinkead/scalariform</connection>
+    </scm>
+    <developers>
+      <developer>
+        <id>jkinkead</id>
+        <name>Jesse Kinkead</name>
+        <url>https://github.com/jkinkead/</url>
+      </developer>
+    </developers>
+  }
 
   def pomExtraXml =
     <inceptionYear>2010</inceptionYear>
