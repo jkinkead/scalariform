@@ -19,29 +19,26 @@ class CommentFormatterTest extends AbstractFormatterTest {
     |*a
     |b
     | */c""" ==>
-  """/**
-    | * a
-    | * b
-    | */
+  """/** a
+    |  * b
+    |  */
     |c"""
 
   """/** 
     |*a
     |b
     | */""" ==>
-  """/**
-    | * a
-    | * b
-    | */
+  """/** a
+    |  * b
+    |  */
     |"""
 
   """/**
     | *
     | *Wibble*/ 
     |class X""" ==>
-  """/**
-    | * Wibble
-    | */
+  """/** Wibble
+    |  */
     |class X"""
 
   """/***/
@@ -65,38 +62,35 @@ class CommentFormatterTest extends AbstractFormatterTest {
     | * }}
     | */
     |class A""" ==>
-  """/**
-    | * {{
-    | *   wibble
-    | * }}
-    | */
+  """/** {{
+    |  *   wibble
+    |  * }}
+    |  */
     |class A"""
 
   """/**
     |*
     |*/""" ==>
   """/**
-    | */
+    |  */
     |"""
 
-  """/**
-    | * Scaladoc should be retained.
-    | * @param first line no indent.
-    | *     second line has indent.
-    | */""" ==>
-  """/**
-    | * Scaladoc should be retained.
-    | * @param first line no indent.
-    | *     second line has indent.
-    | */
+  """/** 
+    |  * Scaladoc should be retained.
+    |  * @param first line no indent.
+    |  *     second line has indent.
+    |  */""" ==>
+  """/** Scaladoc should be retained.
+    |  * @param first line no indent.
+    |  *     second line has indent.
+    |  */
     |"""
 
   """/** a
     |  * b */""" ==>
-  """/**
-    | * a
-    | * b
-    | */
+  """/** a
+    |  * b
+    |  */
     |"""
       
   // nested comments
@@ -104,10 +98,9 @@ class CommentFormatterTest extends AbstractFormatterTest {
     |  /*
     |  */
     | */""" ==>
-  """/**
-    | * /*
-    | * */
-    | */
+  """/** /*
+    |  * */
+    |  */
     |"""
 
   """/**
@@ -115,11 +108,10 @@ class CommentFormatterTest extends AbstractFormatterTest {
     | *    Nested comment.
     | * */
     | */""" ==>
-  """/**
-    | * /*
-    | *    Nested comment.
-    | * */
-    | */
+  """/** /*
+    |  *    Nested comment.
+    |  * */
+    |  */
     |"""
       
   {
@@ -129,8 +121,8 @@ class CommentFormatterTest extends AbstractFormatterTest {
     | *  Second line (well-formatted)
     | */""" ==>
   """/** First line  (well-formatted)
-    | *  Second line (well-formatted)
-    | */
+    |  * Second line (well-formatted)
+    |  */
     |""" 
 
   """/**
@@ -139,30 +131,30 @@ class CommentFormatterTest extends AbstractFormatterTest {
     | *     second line retains indent.
     | */""" ==>
   """/** Scaladoc should be retained.
-    | *  @param first line changes indent.
-    | *     second line retains indent.
-    | */
+    |  * @param first line changes indent.
+    |  *     second line retains indent.
+    |  */
     |"""
 
   """/** First
     |Second line, no leader
     |*Third line, comment ender  */""" ==>
   """/** First
-    | *  Second line, no leader
-    | *  Third line, comment ender
-    | */
+    |  * Second line, no leader
+    |  * Third line, comment ender
+    |  */
     |"""
 
   """/** Ending misaligned
     |*/""" ==>
   """/** Ending misaligned
-    | */
+    |  */
     |"""
 
   """/**
     |*/""" ==>
   """/**
-    | */
+    |  */
     |"""
   }
   
@@ -172,8 +164,7 @@ class CommentFormatterTest extends AbstractFormatterTest {
   """/** This method applies f to each 
     | * element of the given list.
     | */""" ==>
-  """/**
-    |  * This method applies f to each
+  """/** This method applies f to each
     |  * element of the given list.
     |  */
     |""" 
@@ -181,17 +172,15 @@ class CommentFormatterTest extends AbstractFormatterTest {
   """/** Foo
     |Bar
     |*Baz  */""" ==>
-  """/**
-    |  * Foo
+  """/** Foo
     |  * Bar
     |  * Baz
     |  */
     |"""
 
-  """/** Line on start, should be on next line
+  """/** Line on start, should stay
     |*/""" ==>
-  """/**
-    |  * Line on start, should be on next line
+  """/** Line on start, should stay
     |  */
     |"""
 
