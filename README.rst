@@ -35,7 +35,9 @@ You can copy this to a location in your path and execute it as follows: ::
 Integration with sbt
 --------------------
 
-Scalariform includes an sbt plugin in the main repository. See [the README](https://github.com/jkinkead/scalariform/tree/master/sbt-plugin) for details.
+Scalariform includes an sbt plugin in the main repository. See `the README`_ for details.
+
+.. _the README: https://github.com/jkinkead/scalariform/tree/master/sbt-plugin
 
 Integration with Eclipse
 ------------------------
