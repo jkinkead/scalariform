@@ -35,9 +35,7 @@ You can copy this to a location in your path and execute it as follows: ::
 Integration with sbt
 --------------------
 
-A version for sbt >= 0.13.x has been written by Peter Vlugter: https://github.com/daniel-trinh/sbt-scalariform
-
-Please see https://github.com/sbt/sbt-scalariform for older versions of sbt.
+Scalariform includes an sbt plugin in the main repository. See [the README](https://github.com/jkinkead/scalariform/tree/master/sbt-plugin) for details.
 
 Integration with Eclipse
 ------------------------
@@ -421,7 +419,7 @@ indentation is handled differently.
 multilineScaladocCommentsStartOnFirstLine
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Default: ``false``
+Default: ``true``
 
 If ``true``, start a multi-line Scaladoc comment body on same line as the opening comment delimiter::
 
@@ -439,7 +437,7 @@ If ``false``, start the comment body on a separate line below the opening delimi
 placeScaladocAsterisksBeneathSecondAsterisk
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Default: ``false``
+Default: ``true``
 
 If ``true``, Scaladoc asterisks will be placed beneath the second asterisk::
 

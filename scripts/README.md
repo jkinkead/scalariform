@@ -86,3 +86,14 @@ In this mode, staged files are checked for format errors, and the commit is abor
 errors. File paths with errors are printed.
 
 To skip all pre-commit checks (including the autoformatter), you can always run `git commit --no-verify`.
+
+# Packaging
+
+To package up a tar for uploading to S3, run:
+
+```
+sbt one-jar
+tar cvf autoformat.tar -C scripts pre-commit -C ../cli/target/scala-2.10 scalariform.jar
+```
+
+On OS X, you may wish to set `COPYFILE_DISABLE=1` before running the above.
