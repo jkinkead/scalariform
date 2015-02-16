@@ -1,7 +1,7 @@
 package scalariform.sbt
 
 import scalariform.formatter.ScalaFormatter
-import scalariform.formatter.preferences.{ DoubleIndentClassDeclaration, FormattingPreferences, IFormattingPreferences }
+import scalariform.formatter.preferences.{ FormattingPreferences, IFormattingPreferences }
 import scalariform.parser.ScalaParserException
 
 import sbt._
