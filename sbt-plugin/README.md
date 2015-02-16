@@ -16,35 +16,36 @@ Tasks within the non-global scope will operate on all `*.scala` files in the cur
 
 Tasks within the Global scope will run all sub-scoped tasks in-order. By default, this means that the Compile task will be run first, then the Test task.
 
-### `format`
+##### `format`
 
 This task will run scalariform on all source files, modifying any that had changes after formatting. The updated set of files is returned by the task.
 
-### `formatCheck`
+##### `formatCheck`
 
 This task checks all files to see if any are misformatted, prints the ones that are, and returns the list of files needing change.
 
-### `formatCheckStrict`
+##### `formatCheckStrict`
 
 This task checks all files to see if any are misformatted, and throws an exception if any are.
 
 ## Configuration
 
-### `scalariformPreferences: settingKey[IFormattingPreferences]`
+##### `scalariformPreferences: settingKey[IFormattingPreferences]`
 
 ```
 import scalariform.formatter.preferences._
 
-scalariformPreferences := FormattingPreferences().setPreference(AlignSingleLineCaseStatements, true)
+scalariformPreferences :=
+  FormattingPreferences().setPreference(AlignSingleLineCaseStatements, true)
 ```
 
 This key holds any overrides from the default formatting preferences for scalariform. See [the main README](https://github.com/jkinkead/scalariform) for a list of all available keys.
 
-### `sourceDirectories`
+##### `sourceDirectories`
 
 This holds the directories to search when looking for code to format. There should be no reason to update this for most projects.
 
-### `includeFilter`, `excludeFilter`
+##### `includeFilter`, `excludeFilter`
 
 These start empty, but can be set to modify the list of files that will be formatted. For example, if you wanted to format all `*.scala` and `*.sc` files, but not files named `Foo.scala`, you could do:
 
@@ -60,7 +61,7 @@ inConfig(Compile)(filters)
 inConfig(Test)(filters)
 ```
 
-## Formatting integration test code (or code in other Configurations)
+##### Formatting integration test code (or code in other Configurations)
 
 sbt-scalariform exports one function, `addFormatTo`, to add the three `format` tasks to a new configuration:
 
