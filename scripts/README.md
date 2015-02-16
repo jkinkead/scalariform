@@ -9,8 +9,15 @@ instructions below. If you want to manually enable it on a per-project basis, se
 
 ## Setup a Template Project Directory
 
-This assumes you haven't already set up a template project with a pre-commit hook. If you already have a pre-commit
-hook, you'll have to integrate the autoformat hook manually.
+### TL;DR
+
+If you're in a rush and like to walk on the wild side, just run the following command.
+
+```mkdir -p ~/.git_template/hooks; curl s3-us-west-2.amazonaws.com/ai2-misc/autoformat.tar | tar xvf - -C ~/.git_template/hooks; git config --global init.templatedir ~/.git_template```
+
+### Full Instructions
+
+This assumes you haven't already set up a template project with a pre-commit hook. If you already have a pre-commit hook, you'll have to integrate the autoformat hook manually.
 
 Git lets you define a project template that will be used when you run `git init`. This template will be applied to
 the `.git` directory of the project. To create a template directory `~/.git_template` and configure git to use it,
