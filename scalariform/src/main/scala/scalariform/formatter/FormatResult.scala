@@ -5,18 +5,14 @@ import scalariform.lexer._
 import scalariform.parser._
 import scalariform.utils._
 
+/** A class storing formatting instructions for a scalariform pass. */
 case class FormatResult(
     predecessorFormatting: Map[Token, IntertokenFormatInstruction],
     inferredNewlineFormatting: Map[Token, IntertokenFormatInstruction],
     xmlRewrites: Map[Token, String]
 ) {
 
-  def replaceXml(token: Token, replacement: String) = {
-    require(token.tokenType.isXml)
-    copy(xmlRewrites = xmlRewrites + (token -> replacement))
-  }
-
-  def before(token: Token, formatInstruction: IntertokenFormatInstruction) = {
+  def before(token: Token, formatInstruction: IntertokenFormatInstruction): FormatResult = {
     require(!token.isNewline, " cannot do 'before' formatting for NEWLINE* tokens: " + token + ", " + formatInstruction)
     copy(predecessorFormatting = predecessorFormatting + (token -> formatInstruction))
   }
@@ -37,6 +33,14 @@ case class FormatResult(
     hasNewlineInstruction.getOrElse(false)
   }
 
+  /** @return a copy of this FormatResult with a new instruction replacing the given XML token with
+    * the given string
+    */
+  def replaceXml(token: Token, replacement: String): FormatResult = {
+    require(token.tokenType.isXml)
+    copy(xmlRewrites = xmlRewrites + (token -> replacement))
+  }
+
   def mergeWith(other: FormatResult): FormatResult =
     FormatResult(
       this.predecessorFormatting ++ other.predecessorFormatting,
@@ -47,6 +51,7 @@ case class FormatResult(
   def ++(other: FormatResult): FormatResult = mergeWith(other)
 }
 
+/** No-op result. */
 object NoFormatResult extends FormatResult(Map(), Map(), Map())
 
 abstract sealed class IntertokenFormatInstruction
@@ -64,7 +69,11 @@ case object CompactEnsuringGap extends IntertokenFormatInstruction
 case object CompactPreservingGap extends IntertokenFormatInstruction
 
 /** Ensures that the interttoken region ends with NEWLINE INDENT. */
-case class EnsureNewlineAndIndent(indentLevel: Int, relativeTo: Option[Token] = None) extends IntertokenFormatInstruction
+case class EnsureNewlineAndIndent(indentLevel: Int, relativeTo: Option[Token] = None)
+  extends IntertokenFormatInstruction
 
-/** Places the token at spaces number of spaces after the indent level, padding with spaces if necessary */
-case class PlaceAtColumn(indentLevel: Int, spaces: Int, relativeTo: Option[Token] = None) extends IntertokenFormatInstruction
+/** Places the token at spaces number of spaces after the indent level, padding with spaces if
+  * necessary
+  */
+case class PlaceAtColumn(indentLevel: Int, spaces: Int, relativeTo: Option[Token] = None)
+  extends IntertokenFormatInstruction

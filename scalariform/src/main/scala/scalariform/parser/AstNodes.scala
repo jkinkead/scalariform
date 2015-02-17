@@ -27,7 +27,7 @@ sealed trait AstNode extends CaseClassReflector {
   protected implicit def tripleToFlattenable[T1 <% Flattenable, T2 <% Flattenable, T3 <% Flattenable](triple: (T1, T2, T3)): Flattenable = new Flattenable { val tokens = triple._1.tokens ++ triple._2.tokens ++ triple._3.tokens }
   protected implicit def eitherToFlattenable[T1 <% Flattenable, T2 <% Flattenable](either: T1 Either T2): Flattenable = new Flattenable {
     val tokens = either match {
-      case Left(f)  ⇒ f.tokens
+      case Left(f) ⇒ f.tokens
       case Right(f) ⇒ f.tokens
     }
   }
@@ -38,20 +38,19 @@ sealed trait AstNode extends CaseClassReflector {
   def immediateChildren: List[AstNode] = productIterator.toList flatten immediateAstNodes
 
   private def immediateAstNodes(n: Any): List[AstNode] = n match {
-    case a: AstNode                ⇒ List(a)
-    case t: Token                  ⇒ Nil
-    case Some(x)                   ⇒ immediateAstNodes(x)
-    case xs @ (_ :: _)             ⇒ xs flatMap { immediateAstNodes(_) }
-    case Left(x)                   ⇒ immediateAstNodes(x)
-    case Right(x)                  ⇒ immediateAstNodes(x)
-    case (l, r)                    ⇒ immediateAstNodes(l) ++ immediateAstNodes(r)
-    case (x, y, z)                 ⇒ immediateAstNodes(x) ++ immediateAstNodes(y) ++ immediateAstNodes(z)
+    case a: AstNode ⇒ List(a)
+    case t: Token ⇒ Nil
+    case Some(x) ⇒ immediateAstNodes(x)
+    case xs @ (_ :: _) ⇒ xs flatMap { immediateAstNodes(_) }
+    case Left(x) ⇒ immediateAstNodes(x)
+    case Right(x) ⇒ immediateAstNodes(x)
+    case (l, r) ⇒ immediateAstNodes(l) ++ immediateAstNodes(r)
+    case (x, y, z) ⇒ immediateAstNodes(x) ++ immediateAstNodes(y) ++ immediateAstNodes(z)
     case true | false | Nil | None ⇒ Nil
   }
 
-  /**
-   * Returns range of tokens in the node, or None if there are no tokens in the node
-   */
+  /** Returns range of tokens in the node, or None if there are no tokens in the node
+    */
   def rangeOpt: Option[Range] =
     if (tokens.isEmpty)
       None
@@ -91,7 +90,6 @@ case class InfixTypeConstructor(id: Token) extends AstNode with TypeElement {
 sealed trait TypeElement extends AstNode
 
 case class Type(contents: List[TypeElement]) extends AstNode with TypeElement {
-  //require(!contents.isEmpty)
   lazy val tokens = flatten(contents)
 }
 
@@ -129,11 +127,12 @@ case class InfixExpr(left: List[ExprElement], infixId: Token, newlineOption: Opt
 }
 
 case class CallExpr(
-  exprDotOpt: Option[(List[ExprElement], Token)],
-  id: Token,
-  typeArgsOpt: Option[TypeExprElement] = None,
-  newLineOptsAndArgumentExprss: List[(Option[Token], ArgumentExprs)] = Nil,
-  uscoreOpt: Option[Token] = None) extends ExprElement {
+    exprDotOpt: Option[(List[ExprElement], Token)],
+    id: Token,
+    typeArgsOpt: Option[TypeExprElement] = None,
+    newLineOptsAndArgumentExprss: List[(Option[Token], ArgumentExprs)] = Nil,
+    uscoreOpt: Option[Token] = None
+) extends ExprElement {
   lazy val tokens = flatten(exprDotOpt, id, typeArgsOpt, newLineOptsAndArgumentExprss, uscoreOpt)
 }
 
@@ -160,11 +159,13 @@ case class New(newToken: Token, template: Template) extends ExprElement {
   lazy val tokens = flatten(newToken, template)
 }
 
-case class IfExpr(ifToken: Token,
-                  condExpr: CondExpr,
-                  newlinesOpt: Option[Token],
-                  body: Expr,
-                  elseClause: Option[ElseClause]) extends AstNode with ExprElement {
+case class IfExpr(
+    ifToken: Token,
+    condExpr: CondExpr,
+    newlinesOpt: Option[Token],
+    body: Expr,
+    elseClause: Option[ElseClause]
+) extends AstNode with ExprElement {
 
   lazy val tokens = flatten(ifToken, condExpr, newlinesOpt, body, elseClause)
 
@@ -190,13 +191,15 @@ case class DoExpr(doToken: Token, body: Expr, statSepOpt: Option[Token], whileTo
   lazy val tokens = flatten(doToken, body, statSepOpt, whileToken, condExpr)
 }
 
-case class ForExpr(forToken: Token,
-                   lParenOrBrace: Token,
-                   enumerators: Enumerators,
-                   rParenOrBrace: Token,
-                   newlinesOption: Option[Token],
-                   yieldOption: Option[Token],
-                   body: Expr) extends AstNode with ExprElement {
+case class ForExpr(
+    forToken: Token,
+    lParenOrBrace: Token,
+    enumerators: Enumerators,
+    rParenOrBrace: Token,
+    newlinesOption: Option[Token],
+    yieldOption: Option[Token],
+    body: Expr
+) extends AstNode with ExprElement {
 
   lazy val tokens = flatten(forToken, lParenOrBrace, enumerators, rParenOrBrace, newlinesOption, yieldOption, body)
 
@@ -209,11 +212,12 @@ case class Enumerators(initialGenerator: Generator, rest: List[(Token, Enumerato
 }
 
 case class Generator(
-  valOption: Option[Token],
-  pattern: Expr,
-  equalsOrArrowToken: Token,
-  expr: Expr,
-  guards: List[Guard]) extends AstNode with Enumerator {
+    valOption: Option[Token],
+    pattern: Expr,
+    equalsOrArrowToken: Token,
+    expr: Expr,
+    guards: List[Guard]
+) extends AstNode with Enumerator {
 
   lazy val tokens = flatten(valOption, pattern, equalsOrArrowToken, expr, guards)
 
@@ -266,11 +270,13 @@ case class TypeDefOrDcl(contents: List[TypeElement]) extends DefOrDcl {
   lazy val tokens = flatten(contents)
 }
 
-case class PatDefOrDcl(valOrVarToken: Token,
-                       pattern: Expr,
-                       otherPatterns: List[(Token, Expr)],
-                       typedOpt: Option[(Token, Type)],
-                       equalsClauseOption: Option[(Token, Expr)]) extends DefOrDcl {
+case class PatDefOrDcl(
+    valOrVarToken: Token,
+    pattern: Expr,
+    otherPatterns: List[(Token, Expr)],
+    typedOpt: Option[(Token, Type)],
+    equalsClauseOption: Option[(Token, Expr)]
+) extends DefOrDcl {
 
   lazy val tokens = flatten(valOrVarToken, pattern, otherPatterns, typedOpt, equalsClauseOption)
 
@@ -298,34 +304,40 @@ case class Param(annotations: List[Annotation], modifiers: List[Modifier], valOr
   lazy val tokens = flatten(annotations, modifiers, valOrVarOpt, id, paramTypeOpt, defaultValueOpt)
 }
 
-case class FunDefOrDcl(defToken: Token,
-                       nameToken: Token, // id or THIS
-                       typeParamClauseOpt: Option[TypeParamClause],
-                       paramClauses: ParamClauses,
-                       returnTypeOpt: Option[(Token, Type)],
-                       funBodyOpt: Option[FunBody],
-                       localDef: Boolean) extends DefOrDcl {
+case class FunDefOrDcl(
+    defToken: Token,
+    nameToken: Token, // id or THIS
+    typeParamClauseOpt: Option[TypeParamClause],
+    paramClauses: ParamClauses,
+    returnTypeOpt: Option[(Token, Type)],
+    funBodyOpt: Option[FunBody],
+    localDef: Boolean
+) extends DefOrDcl {
 
   lazy val tokens = flatten(defToken, nameToken, typeParamClauseOpt, paramClauses, returnTypeOpt, funBodyOpt)
 
 }
 
-case class TmplDef(markerTokens: List[Token],
-                   name: Token,
-                   typeParamClauseOpt: Option[TypeParamClause],
-                   annotations: List[Annotation],
-                   accessModifierOpt: Option[AccessModifier],
-                   paramClausesOpt: Option[ParamClauses],
-                   templateInheritanceSectionOpt: Option[TemplateInheritanceSection],
-                   templateBodyOption: Option[TemplateBody]) extends DefOrDcl {
+case class TmplDef(
+    markerTokens: List[Token],
+    name: Token,
+    typeParamClauseOpt: Option[TypeParamClause],
+    annotations: List[Annotation],
+    accessModifierOpt: Option[AccessModifier],
+    paramClausesOpt: Option[ParamClauses],
+    templateInheritanceSectionOpt: Option[TemplateInheritanceSection],
+    templateBodyOption: Option[TemplateBody]
+) extends DefOrDcl {
   //require(markerTokens.size <= 2)
   lazy val tokens = flatten(markerTokens, name, typeParamClauseOpt, annotations, accessModifierOpt, paramClausesOpt, templateInheritanceSectionOpt, templateBodyOption)
 
 }
 
-case class TemplateInheritanceSection(extendsOrSubtype: Token,
-                                      earlyDefsOpt: Option[EarlyDefs],
-                                      templateParentsOpt: Option[TemplateParents]) extends AstNode {
+case class TemplateInheritanceSection(
+    extendsOrSubtype: Token,
+    earlyDefsOpt: Option[EarlyDefs],
+    templateParentsOpt: Option[TemplateParents]
+) extends AstNode {
 
   lazy val tokens = flatten(extendsOrSubtype, earlyDefsOpt, templateParentsOpt)
 
@@ -336,9 +348,9 @@ case class EarlyDefs(earlyBody: TemplateBody, withOpt: Option[Token]) extends As
 }
 
 case class Template(
-  earlyDefsOpt: Option[EarlyDefs],
-  templateParentsOpt: Option[TemplateParents],
-  templateBodyOpt: Option[TemplateBody]
+    earlyDefsOpt: Option[EarlyDefs],
+    templateParentsOpt: Option[TemplateParents],
+    templateBodyOpt: Option[TemplateBody]
 ) extends ExprElement {
   lazy val tokens = flatten(earlyDefsOpt, templateParentsOpt, templateBodyOpt)
 }
@@ -349,9 +361,11 @@ case class TemplateBody(newlineOpt: Option[Token], lbrace: Token, statSeq: StatS
 
 sealed trait Stat extends AstNode
 
-case class StatSeq(selfReferenceOpt: Option[(Expr, Token)],
-                   firstStatOpt: Option[Stat],
-                   otherStats: List[(Token, Option[Stat])]) extends AstNode with ExprElement {
+case class StatSeq(
+    selfReferenceOpt: Option[(Expr, Token)],
+    firstStatOpt: Option[Stat],
+    otherStats: List[(Token, Option[Stat])]
+) extends AstNode with ExprElement {
 
   lazy val tokens = flatten(selfReferenceOpt, firstStatOpt, otherStats)
 

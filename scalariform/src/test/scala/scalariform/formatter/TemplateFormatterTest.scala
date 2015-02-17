@@ -319,6 +319,50 @@ implicit val formattingPreferences = FormattingPreferences.setPreference(SpacesW
     |  }
     |)"""
 
+  // Handles implicit parameter lists correctly without vals.
+  """class SomeClass(
+    |parameterOne: Int =
+    |  1,
+    |val parameterTwo: Option[String]
+    |  = None,
+    |three:
+    |  String = "three")(
+    |intermediate
+    |  : Int
+    |)(
+    |implicit noVal: Int)""" ==>
+  """class SomeClass(
+    |  parameterOne: Int = 1,
+    |  val parameterTwo: Option[String] = None,
+    |  three: String = "three"
+    |)(
+    |  intermediate: Int
+    |)(
+    |  implicit noVal: Int
+    |)"""
+
+  // Handles implicit parameter lists correctly.
+  """def someMethod(
+    |parameterOne: Int = 1,
+    |val parameterTwo: Option[String] = None,
+    |three: String = "three")(
+    |intermediate: Int
+    |)(
+    |implicit val four: Int,
+    |five: String,
+    |six: Boolean)""" ==>
+  """def someMethod(
+    |  parameterOne: Int = 1,
+    |  val parameterTwo: Option[String] = None,
+    |  three: String = "three"
+    |)(
+    |  intermediate: Int
+    |)(
+    |  implicit val four: Int,
+    |  five: String,
+    |  six: Boolean
+    |)"""
+
 {
    implicit val formattingPreferences = FormattingPreferences.
      setPreference(AlignParameters, true).
@@ -376,17 +420,16 @@ implicit val formattingPreferences = FormattingPreferences.setPreference(SpacesW
      |  implicit
      |  val e: String = "",
      |  f: Int = 2
-     |)""" =/=>
+     |)""" ==>
    """class a(
-     |  a: String = ""
+     |  a: String = "",
      |  b: Int    = 0
      |)(
-     |  c: String = ""
+     |  c: String = "",
      |  d: Int    = 1
      |)(
-     |  implicit
-     |  val e: String = ""
-     |  f: Int        = 2
+     |  implicit val e: String = "",
+     |           f:     Int    = 2
      |)"""
 }
 
@@ -401,7 +444,7 @@ implicit val formattingPreferences = FormattingPreferences.setPreference(SpacesW
     """class A[T](a: T)(implicit b: B, c: C,
         |d: D)""" ==>
       """class A[T](a: T)(implicit b: B, c: C,
-        |                 d: D)"""
+        |                          d: D)"""
 
    // Split into 3 columns: name, type, and default
   """def showInput[A](
@@ -421,7 +464,7 @@ implicit val formattingPreferences = FormattingPreferences.setPreference(SpacesW
     |  entries:     Seq[A]        = Nil,
     |  initial:     A
     |): Option[A]"""
-  
+
     // Formats function types correctly
   """private def executeWithinClient[T](
     |crawlerConfig: String => JsValue = Fancy.function,
@@ -511,10 +554,9 @@ implicit val formattingPreferences = FormattingPreferences.setPreference(SpacesW
     |)(
     |  intermediate: Int
     |)(
-    |  implicit
-    |  val four: Int,
-    |  five:     String,
-    |  six:      Boolean
+    |  implicit val four: Int,
+    |           five:     String,
+    |           six:      Boolean
     |)"""
 
    // Handles annotations, modifiers, and comments
@@ -581,11 +623,10 @@ implicit val formattingPreferences = FormattingPreferences.setPreference(SpacesW
     |def y: Int
     |})""" ==>
   """class A(
-    |  implicit
-    |  n: {
-    |    def x: Int
-    |    def y: Int
-    |  }
+    |  implicit n: {
+    |             def x: Int
+    |             def y: Int
+    |           }
     |)"""
 
   """class A(n: {
@@ -845,7 +886,7 @@ implicit val formattingPreferences = FormattingPreferences.setPreference(SpacesW
     |  bar()
     |}"""
 
-//  format: ON
+  //  format: ON
 
   override val debug = false
 

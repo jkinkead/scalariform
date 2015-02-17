@@ -19,23 +19,21 @@ trait TypeFormatter { self: HasFormattingPreferences with AnnotationFormatter wi
         previousElement.isInstanceOf[Refinement] ||
         previousElement.isInstanceOf[InfixTypeConstructor] ||
         element.isInstanceOf[Refinement] ||
-        element.isInstanceOf[InfixTypeConstructor])
+        element.isInstanceOf[InfixTypeConstructor]) {
         formatResult = formatResult.formatNewlineOrOrdinary(element.firstToken, CompactEnsuringGap)
-      else if (element.isInstanceOf[Annotation]) {
+      } else if (element.isInstanceOf[Annotation]) {
         val instruction =
           previousElement match {
             case GeneralTokens(tokens) if tokens.last.tokenType == Tokens.LBRACKET ⇒ Compact
             case _ ⇒ CompactEnsuringGap
           }
         formatResult = formatResult.before(element.firstToken, instruction)
-      } else if (previousElement.isInstanceOf[VarianceTypeElement])
+      } else if (previousElement.isInstanceOf[VarianceTypeElement]) {
         formatResult = formatResult.before(element.firstToken, Compact)
-      else if (element.isInstanceOf[VarargsTypeElement]) {
+      } else if (element.isInstanceOf[VarargsTypeElement]) {
         val instruction = if (Chars.isOperatorPart(previousElement.lastToken.text.last)) CompactEnsuringGap else Compact
         formatResult = formatResult.before(element.firstToken, instruction)
       }
-      //      else if (previousElement.isInstanceOf[CallByNameTypeElement])
-      //	formatResult = formatResult.before(element.firstToken, Compact)
       formatResult ++= format(element)
     }
     formatResult
@@ -43,14 +41,14 @@ trait TypeFormatter { self: HasFormattingPreferences with AnnotationFormatter wi
 
   private def format(typeElement: TypeElement)(implicit formatterState: FormatterState): FormatResult = {
     typeElement match {
-      case type_ @ Type(_)                     ⇒ format(type_)
-      case refinement @ Refinement(_, _, _)    ⇒ format(refinement)
+      case type_ @ Type(_) ⇒ format(type_)
+      case refinement @ Refinement(_, _, _) ⇒ format(refinement)
       case annotation @ Annotation(_, _, _, _) ⇒ format(annotation)
-      case TypeParamClause(contents)           ⇒ format(contents)
-      case TypeParam(contents)                 ⇒ format(contents)
-      case VarianceTypeElement(id)             ⇒ NoFormatResult
-      case VarargsTypeElement(star)            ⇒ NoFormatResult
-      case _                                   ⇒ NoFormatResult
+      case TypeParamClause(contents) ⇒ format(contents)
+      case TypeParam(contents) ⇒ format(contents)
+      case VarianceTypeElement(id) ⇒ NoFormatResult
+      case VarargsTypeElement(star) ⇒ NoFormatResult
+      case _ ⇒ NoFormatResult
     }
   }
 

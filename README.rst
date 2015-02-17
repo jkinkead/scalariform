@@ -153,22 +153,13 @@ If ``true``, then::
     favoriteColor:    java.awt.Color
   )
 
-This will also place the "implicit" keyword in parameters on it's own line, whenever
-the parameter being formatted contains a newline::
+This will align implicit parameters with the start of the first parameter's declaration:
 
-For example, if ``false``, then::
+For example::
 
   def formatBirthDate(
     implicit birthdate: Date = Date("11/11/11"),
-    birthtime: Time
-  ): DateTime
-
-If ``true``, then::
-
-  def formatBirthDate(
-    implicit
-    birthdate: Date = Date("11/11/11"),
-    birthtime: Time
+             birthtime: Time
   ): DateTime
 
 This option is disabled if ``indentWithTabs`` is ``true``.

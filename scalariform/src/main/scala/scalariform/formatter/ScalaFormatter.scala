@@ -11,7 +11,6 @@ import PartialFunction._
 import scalariform.ScalaVersions
 
 trait HasHiddenTokenInfo {
-
   def isInferredNewline(token: Token): Boolean
 
   def inferredNewlines(token: Token): HiddenTokens
@@ -53,15 +52,14 @@ abstract class ScalaFormatter extends HasFormattingPreferences
     result
   }
 
-  /**
-   * Converts an AstNode into what it should look like in text after Scalariform has run.
-   * Useful for calculating the actual length of an [[scalariform.parser.AstNode]] after formatting.
-   *
-   * @param ast The AST to format and render as a string
-   * @param astFormatResult Should run formatting actions for 'ast'
-   * @return Formatted string representation of what the AstNode should look like after Scalariform
-   *         has run
-   */
+  /** Converts an AstNode into what it should look like in text after Scalariform has run.
+    * Useful for calculating the actual length of an [[scalariform.parser.AstNode]] after formatting.
+    *
+    * @param ast The AST to format and render as a string
+    * @param astFormatResult Should run formatting actions for 'ast'
+    * @return Formatted string representation of what the AstNode should look like after Scalariform
+    *         has run
+    */
   protected def formattedAstNode(ast: AstNode)(astFormatResult: ⇒ FormatResult): String = {
     val source = getSource(ast)
     val formatResult = astFormatResult
@@ -140,19 +138,21 @@ abstract class ScalaFormatter extends HasFormattingPreferences
       .distinct
   }
 
-  private def writeHiddenTokens(builder: StringBuilder,
-                                hiddenTokens: HiddenTokens,
-                                instruction: IntertokenFormatInstruction,
-                                nextTokenUnindents: Boolean,
-                                includeBufferBeforeNextToken: Boolean,
-                                previousTokenIsPrintable: Boolean,
-                                tokenIndentMap: Map[Token, Int],
-                                positionHintOption: Option[Int] = None): Option[TextEdit] = {
+  private def writeHiddenTokens(
+    builder: StringBuilder,
+    hiddenTokens: HiddenTokens,
+    instruction: IntertokenFormatInstruction,
+    nextTokenUnindents: Boolean,
+    includeBufferBeforeNextToken: Boolean,
+    previousTokenIsPrintable: Boolean,
+    tokenIndentMap: Map[Token, Int],
+    positionHintOption: Option[Int] = None
+  ): Option[TextEdit] = {
     def writeIntertokenCompact() {
       val comments = hiddenTokens.comments
       for ((previousCommentOption, comment, nextCommentOption) ← Utils.withPreviousAndNext(comments)) {
         val needGapBetweenThisAndPrevious = cond(previousCommentOption) {
-          case Some(MultiLineComment(_)) | Some(ScalaDocComment(_))      ⇒ true
+          case Some(MultiLineComment(_)) | Some(ScalaDocComment(_)) ⇒ true
           case _ if comment == comments.head && previousTokenIsPrintable ⇒ true
         }
         if (needGapBetweenThisAndPrevious)
@@ -166,7 +166,7 @@ abstract class ScalaFormatter extends HasFormattingPreferences
       }
       val needGapBetweenThisAndFollowing = cond(comments.lastOption) {
         case Some(MultiLineComment(_)) if includeBufferBeforeNextToken ⇒ true
-        case Some(ScalaDocComment(_)) if includeBufferBeforeNextToken  ⇒ true
+        case Some(ScalaDocComment(_)) if includeBufferBeforeNextToken ⇒ true
       }
       if (needGapBetweenThisAndFollowing)
         builder.append(" ")
@@ -218,7 +218,7 @@ abstract class ScalaFormatter extends HasFormattingPreferences
                 val newlineCount = token.text.count(_ == '\n')
                 val newlinesToWrite = previousOpt match {
                   case Some(SingleLineComment(_)) ⇒ math.min(1, newlineCount)
-                  case _                          ⇒ math.min(2, newlineCount)
+                  case _ ⇒ math.min(2, newlineCount)
                 }
                 for (i ← 1 to newlinesToWrite)
                   builder.newline()
@@ -275,9 +275,9 @@ abstract class ScalaFormatter extends HasFormattingPreferences
     def write(token: Token, replacementOption: Option[String] = None): Option[TextEdit] = {
       val rewriteArrows = formattingPreferences(RewriteArrowSymbols)
       val actualReplacementOption = replacementOption orElse (condOpt(token.tokenType) {
-        case ARROW if rewriteArrows  ⇒ "⇒"
+        case ARROW if rewriteArrows ⇒ "⇒"
         case LARROW if rewriteArrows ⇒ "←"
-        case EOF                     ⇒ ""
+        case EOF ⇒ ""
       })
       builder.append(actualReplacementOption getOrElse token.rawText)
       actualReplacementOption map { replaceEdit(token, _) }
@@ -416,14 +416,14 @@ abstract class ScalaFormatter extends HasFormattingPreferences
       return CompactEnsuringGap
     type1 match {
       case ARROW if type2 != RPAREN ⇒ return CompactEnsuringGap // TODO: Redundant? no test fails.
-      case COMMA                    ⇒ return CompactEnsuringGap
-      case _                        ⇒
+      case COMMA ⇒ return CompactEnsuringGap
+      case _ ⇒
     }
     type2 match {
-      case IF if type1 != LPAREN    ⇒ return CompactEnsuringGap
+      case IF if type1 != LPAREN ⇒ return CompactEnsuringGap
       case ARROW if type1 != LPAREN ⇒ return CompactEnsuringGap
-      case AT if type2.isId         ⇒ return CompactEnsuringGap
-      case _                        ⇒
+      case AT if type2.isId ⇒ return CompactEnsuringGap
+      case _ ⇒
     }
     Compact
   }
@@ -471,14 +471,14 @@ object ScalaFormatter {
 
   @throws(classOf[ScalaParserException])
   def format(source: String, formattingPreferences: IFormattingPreferences = FormattingPreferences(), lineDelimiter: Option[String] = None,
-             initialIndentLevel: Int = 0, scalaVersion: String = ScalaVersions.DEFAULT_VERSION): String = {
+    initialIndentLevel: Int = 0, scalaVersion: String = ScalaVersions.DEFAULT_VERSION): String = {
     val edits = formatAsEdits(source, formattingPreferences, lineDelimiter, initialIndentLevel, scalaVersion)
     TextEditProcessor.runEdits(source, edits)
   }
 
   @throws(classOf[ScalaParserException])
   def formatAsEdits(source: String, formattingPreferences: IFormattingPreferences = FormattingPreferences(), lineDelimiter: Option[String] = None,
-                    initialIndentLevel: Int = 0, scalaVersion: String = ScalaVersions.DEFAULT_VERSION): List[TextEdit] = {
+    initialIndentLevel: Int = 0, scalaVersion: String = ScalaVersions.DEFAULT_VERSION): List[TextEdit] = {
     val specificFormatter = new SpecificFormatter {
 
       type Result = CompilationUnit
