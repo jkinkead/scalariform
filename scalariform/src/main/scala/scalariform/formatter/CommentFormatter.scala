@@ -47,18 +47,23 @@ trait CommentFormatter { self: HasFormattingPreferences with ScalaFormatter ⇒
     }
   }
 
-  def formatComment(commentToken: HiddenToken, indentLevel: Int): String = {
+  def formatScaladocComment(commentToken: HiddenToken, indentLevel: Int): String = {
     // Only format multi-line comments.
     if (commentToken.rawText contains '\n') {
-      val alignBeneathSecondAsterisk =
-        formattingPreferences(PlaceScaladocAsterisksBeneathSecondAsterisk)
-      val startOnFirstLine = formattingPreferences(MultilineScaladocCommentsStartOnFirstLine)
-      val beforeStarSpaces = if (alignBeneathSecondAsterisk) "  " else " "
-      val afterStarSpaces = if (startOnFirstLine && !alignBeneathSecondAsterisk) "  " else " "
 
       val (start, comments) = getComments(commentToken.rawText)
       // Drop any leading empty lines.
       val trimmedComments = comments dropWhile { _.trimmedAfterStarText.isEmpty }
+
+      val hasTwoAsterisks = start == "/**"
+      val alignBeneathSecondAsterisk = hasTwoAsterisks &&
+        formattingPreferences(PlaceScaladocAsterisksBeneathSecondAsterisk)
+
+      val startOnFirstLine = formattingPreferences(MultilineScaladocCommentsStartOnFirstLine)
+
+      val beforeStarSpaces = if (alignBeneathSecondAsterisk) "  " else " "
+      val afterStarSpaces =
+        if (startOnFirstLine && hasTwoAsterisks && !alignBeneathSecondAsterisk) "  " else " "
 
       // Start the comment with the same characters as we had originally.
       val sb = new StringBuilder(start)
@@ -92,5 +97,10 @@ trait CommentFormatter { self: HasFormattingPreferences with ScalaFormatter ⇒
     } else {
       commentToken.rawText
     }
+  }
+
+  /** Formats a single-line comment (starting with '//'). This merely trims the text. */
+  def formatSingleLineComment(commentToken: HiddenToken): String = {
+    commentToken.rawText.trim + newlineSequence
   }
 }

@@ -208,17 +208,17 @@ abstract class ScalaFormatter extends HasFormattingPreferences
           val commentIndentLevel = if (nextTokenUnindents) indentLevel + 1 else indentLevel
           for ((previousOpt, hiddenToken, nextOpt) ← Utils.withPreviousAndNext(hiddenTokens)) {
             hiddenToken match {
-              case ScalaDocComment(token) ⇒
+              case ScalaDocComment(_) | MultiLineComment(_) ⇒
                 builder.ensureAtBeginningOfLine()
                 builder.indent(commentIndentLevel, baseIndentOption)
-                builder.append(formatComment(hiddenToken, commentIndentLevel))
-              case SingleLineComment(_) | MultiLineComment(_) ⇒
+                builder.append(formatScaladocComment(hiddenToken, commentIndentLevel))
+              case SingleLineComment(_) =>
                 if (builder.atBeginningOfLine) {
                   builder.indent(commentIndentLevel, baseIndentOption)
                 } else if (builder.atVisibleCharacter) { // Separation from previous visible token
                   builder.append(" ")
                 }
-                builder.write(hiddenToken)
+                builder.append(formatSingleLineComment(hiddenToken))
               case Whitespace(token) ⇒
                 val newlineCount = token.text.count(_ == '\n')
                 val newlinesToWrite = previousOpt match {

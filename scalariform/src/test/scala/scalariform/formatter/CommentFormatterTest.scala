@@ -44,6 +44,30 @@ class CommentFormatterTest extends AbstractFormatterTest {
     |  */
     |"""
 
+  """/** This is a one-liner with trailing space. */   """ ==>
+  """/** This is a one-liner with trailing space. */
+    |"""
+
+  """// This is a one-liner with trailing space.   """ ==>
+  """// This is a one-liner with trailing space.
+    |"""
+
+  """// This is a two-liner with trailing space.   
+    |// Line two, also with trailing space.  
+    |""" ==>
+  """// This is a two-liner with trailing space.
+    |// Line two, also with trailing space.
+    |"""
+
+  """/* This is a non-scaladoc multi-line comment, with trailing space. 
+    | * Trailing space on both lines! 
+    | */
+    |""" ==>
+  """/* This is a non-scaladoc multi-line comment, with trailing space.
+    | * Trailing space on both lines!
+    | */
+    |"""
+
   """/**
     | *
     | *Wibble*/ 
