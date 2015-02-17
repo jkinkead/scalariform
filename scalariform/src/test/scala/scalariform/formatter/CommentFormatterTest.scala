@@ -22,7 +22,8 @@ class CommentFormatterTest extends AbstractFormatterTest {
   """/** a
     |  * b
     |  */
-    |c"""
+    |c
+    |"""
 
   """/** 
     |*a
@@ -33,28 +34,42 @@ class CommentFormatterTest extends AbstractFormatterTest {
     |  */
     |"""
 
+  """/** This line has trailing spaces.  
+    |  *   
+    |  * So does the line above this.
+    |  */""" ==>
+  """/** This line has trailing spaces.
+    |  *
+    |  * So does the line above this.
+    |  */
+    |"""
+
   """/**
     | *
     | *Wibble*/ 
     |class X""" ==>
   """/** Wibble
     |  */
-    |class X"""
+    |class X
+    |"""
 
   """/***/
     |class A""" ==>
   """/***/
-    |class A"""
+    |class A
+    |"""
 
   """/** */
     |class A""" ==>
   """/** */
-    |class A"""
+    |class A
+    |"""
 
   """/** a */
     |class A""" ==>
   """/** a */
-    |class A"""
+    |class A
+    |"""
 
   """/**
     | * {{
@@ -66,7 +81,8 @@ class CommentFormatterTest extends AbstractFormatterTest {
     |  *   wibble
     |  * }}
     |  */
-    |class A"""
+    |class A
+    |"""
 
   """/**
     |*

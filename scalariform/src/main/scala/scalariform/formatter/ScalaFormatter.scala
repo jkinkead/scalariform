@@ -46,10 +46,15 @@ abstract class ScalaFormatter extends HasFormattingPreferences
 
   def format(compilationUnit: CompilationUnit)(implicit formatterState: FormatterState = FormatterState()): FormatResult = {
     val topStats = compilationUnit.topStats
-    var result = format(topStats)
-    for (firstStat ← topStats.firstStatOpt)
-      result = result.before(firstStat.firstToken, EnsureNewlineAndIndent(0))
-    result
+    val topResult = format(topStats)
+    // Ensure no indent at the start.
+    val withStartingNewline = topStats.firstStatOpt map { firstStat =>
+      topResult.before(firstStat.firstToken, EnsureNewlineAndIndent(0))
+    } getOrElse {
+      topResult
+    }
+    // Ensure a newline at EOF.
+    withStartingNewline.before(compilationUnit.eofToken, EnsureNewlineAndIndent(0))
   }
 
   /** Converts an AstNode into what it should look like in text after Scalariform has run.

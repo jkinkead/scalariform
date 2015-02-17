@@ -28,20 +28,22 @@ class IndentWithTabsTest extends AbstractFormatterTest {
     |
     |	}
     |
-    |}"""
+    |}
+    |"""
 
   """val n = 42 +
     |3""" ==>
   """val n = 42 +
-    |	3"""
+    |	3
+    |"""
 
   """val xml = <foo>
     |bar
     |</foo>""" ==>
   """val xml = <foo>
     |	bar
-    |</foo>"""
-
+    |</foo>
+    |"""
 
   override val debug = false
 
@@ -50,5 +52,4 @@ class IndentWithTabsTest extends AbstractFormatterTest {
   def parse(parser: ScalaParser) = parser.compilationUnitOrScript
   
   def format(formatter: ScalaFormatter, result: Result) = formatter.format(result)(FormatterState())
-
 }

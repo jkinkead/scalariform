@@ -14,9 +14,9 @@ class PackageFormatterTest extends AbstractFormatterTest {
   
   def format(formatter: ScalaFormatter, result: Result) = formatter.format(result)(FormatterState())
 
-  "package foo" ==> "package foo"
+  "package foo" ==> "package foo\n"
 
-  "package foo . bar . baz" ==> "package foo.bar.baz"
+  "package foo . bar . baz" ==> "package foo.bar.baz\n"
 
   """package foo {
     |package bar {
@@ -27,11 +27,13 @@ class PackageFormatterTest extends AbstractFormatterTest {
     |  package bar {
     |    class Baz
     |  }
-    |}"""
+    |}
+    |"""
 
   """package a 
      |{}""" ==>
-  """package a {}"""
+  """package a {}
+     |"""
 
   {
 
@@ -46,6 +48,7 @@ class PackageFormatterTest extends AbstractFormatterTest {
     |package bar {
     |class Baz
     |}
-    |}"""
+    |}
+    |"""
   }
 }
