@@ -1,18 +1,18 @@
 package scalariform.gui
 
-import scalariform.formatter.FormatResult
+import scalariform.formatter.{ FormatResult, NoFormatResult }
 import javax.swing.JTable
 import scalariform.lexer.Token
 import javax.swing.table.AbstractTableModel
 import scalariform.utils.Range
 
-class TokenTable extends JTable(new TokenTableModel(Nil, FormatResult.EMPTY)) {
+class TokenTable extends JTable(new TokenTableModel(Nil, NoFormatResult)) {
 
   setCellSelectionEnabled(false)
   setRowSelectionAllowed(true)
   setColumnSelectionAllowed(false)
 
-  def setTokens(tokens: List[Token], formatResult: FormatResult = FormatResult.EMPTY) {
+  def setTokens(tokens: List[Token], formatResult: FormatResult = NoFormatResult) {
     val tableModel = new TokenTableModel(tokens, formatResult)
     setModel(tableModel)
   }
@@ -22,7 +22,7 @@ class TokenTable extends JTable(new TokenTableModel(Nil, FormatResult.EMPTY)) {
   def getSelectedToken: Option[Token] =
     getSelectedRow() match {
       case -1 ⇒ None
-      case n  ⇒ Some(getModel.tokens(n))
+      case n ⇒ Some(getModel.tokens(n))
     }
 
 }

@@ -5,13 +5,11 @@ import scalariform.lexer._
 import scalariform.parser._
 import scalariform.utils._
 
-object FormatResult {
-  val EMPTY = FormatResult(Map(), Map(), Map())
-}
-
-case class FormatResult(predecessorFormatting: Map[Token, IntertokenFormatInstruction],
-                        inferredNewlineFormatting: Map[Token, IntertokenFormatInstruction],
-                        xmlRewrites: Map[Token, String]) {
+case class FormatResult(
+    predecessorFormatting: Map[Token, IntertokenFormatInstruction],
+    inferredNewlineFormatting: Map[Token, IntertokenFormatInstruction],
+    xmlRewrites: Map[Token, String]
+) {
 
   def replaceXml(token: Token, replacement: String) = {
     require(token.tokenType.isXml)
@@ -40,22 +38,23 @@ case class FormatResult(predecessorFormatting: Map[Token, IntertokenFormatInstru
   }
 
   def mergeWith(other: FormatResult): FormatResult =
-    FormatResult(this.predecessorFormatting ++ other.predecessorFormatting,
+    FormatResult(
+      this.predecessorFormatting ++ other.predecessorFormatting,
       this.inferredNewlineFormatting ++ other.inferredNewlineFormatting,
-      this.xmlRewrites ++ other.xmlRewrites)
+      this.xmlRewrites ++ other.xmlRewrites
+    )
 
-  def ++(other: FormatResult) = mergeWith(other)
+  def ++(other: FormatResult): FormatResult = mergeWith(other)
 }
 
 object NoFormatResult extends FormatResult(Map(), Map(), Map())
 
 abstract sealed class IntertokenFormatInstruction
 
-/**
- * Packs the comments together as compactly as possible, eliminating
- * as much non-comment whitespace as possible while ensuring that the
- * lexer produces the same tokens.
- */
+/** Packs the comments together as compactly as possible, eliminating
+  * as much non-comment whitespace as possible while ensuring that the
+  * lexer produces the same tokens.
+  */
 case object Compact extends IntertokenFormatInstruction
 
 /** Like "Compact", but ensures there is either some comment or a single space. */
