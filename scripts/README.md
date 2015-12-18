@@ -13,6 +13,12 @@ instructions below. If you want to manually enable it on a per-project basis, se
 
 If you're in a rush and like to walk on the wild side, just run the following command.
 
+**If you are using AI2 plugins >= v1.1.6**
+
+```mkdir -p ~/.git_template/hooks; curl s3-us-west-2.amazonaws.com/ai2-misc/autoformat2.tar | tar xvf - -C ~/.git_template/hooks; git config --global init.templatedir ~/.git_template```
+
+**If you are using AI2 plugins < v1.1.6**
+
 ```mkdir -p ~/.git_template/hooks; curl s3-us-west-2.amazonaws.com/ai2-misc/autoformat.tar | tar xvf - -C ~/.git_template/hooks; git config --global init.templatedir ~/.git_template```
 
 ### Full Instructions
@@ -29,11 +35,21 @@ $ git config --global init.templatedir ~/.git_template
 
 ## Download & Install the Autoformatter
 
-Download the pre-built autoformatter tar file [from S3](https://s3-us-west-2.amazonaws.com/ai2-misc/autoformat.tar).
+Download the pre-built autoformatter tar file from S3:
+
+**If you are using AI2 plugins >= v1.1.6**:
+```shell
+curl https://s3-us-west-2.amazonaws.com/ai2-misc/autoformat2.tar > ~/Downloads/autoformat.tar
+```
+
+**If you are using AI2 plugins < v1.1.6**:
+```shell
+curl https://s3-us-west-2.amazonaws.com/ai2-misc/autoformat.tar > ~/Downloads/autoformat.tar
+```
 
 Untar it into the template directory you created above:
 ```
-$ tar xvf ~/Downloads/autoformat.tar -C ~/.git_template/hooks/
+$ tar xvf ~/Downloads/autoformat2.tar -C ~/.git_template/hooks/
 x pre-commit
 x scalariform.jar
 ```
