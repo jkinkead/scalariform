@@ -9,20 +9,6 @@ instructions below. If you want to manually enable it on a per-project basis, se
 
 ## Setup a Template Project Directory
 
-### TL;DR
-
-If you're in a rush and like to walk on the wild side, just run the following command.
-
-**If you are using AI2 plugins >= v1.1.6**
-
-```mkdir -p ~/.git_template/hooks; curl s3-us-west-2.amazonaws.com/ai2-misc/autoformat2.tar | tar xvf - -C ~/.git_template/hooks; git config --global init.templatedir ~/.git_template```
-
-**If you are using AI2 plugins < v1.1.6**
-
-```mkdir -p ~/.git_template/hooks; curl s3-us-west-2.amazonaws.com/ai2-misc/autoformat.tar | tar xvf - -C ~/.git_template/hooks; git config --global init.templatedir ~/.git_template```
-
-### Full Instructions
-
 This assumes you haven't already set up a template project with a pre-commit hook. If you already have a pre-commit hook, you'll have to integrate the autoformat hook manually.
 
 Git lets you define a project template that will be used when you run `git init`. This template will be applied to
@@ -33,23 +19,23 @@ $ mkdir -p ~/.git_template/hooks
 $ git config --global init.templatedir ~/.git_template
 ```
 
-## Download & Install the Autoformatter
+### Download & Install the Autoformatter
 
-Download the pre-built autoformatter tar file from S3:
+Download the pre-built autoformatter tar file from S3 (currently requires AWS credentials):
 
 **If you are using AI2 plugins >= v1.1.6**:
 ```shell
-curl https://s3-us-west-2.amazonaws.com/ai2-misc/autoformat2.tar > ~/Downloads/autoformat.tar
+aws s3 cp s3://ai2-misc/autoformat2.tar ~/Downloads/autoformat2.tar
 ```
 
 **If you are using AI2 plugins < v1.1.6**:
 ```shell
-curl https://s3-us-west-2.amazonaws.com/ai2-misc/autoformat.tar > ~/Downloads/autoformat.tar
+aws s3 cp s3://ai2-misc/autoformat.tar ~/Downloads/autoformat.tar
 ```
 
 Untar it into the template directory you created above:
 ```
-$ tar xvf ~/Downloads/autoformat2.tar -C ~/.git_template/hooks/
+$ tar xvf ~/Downloads/autoformat.tar -C ~/.git_template/hooks/
 x pre-commit
 x scalariform.jar
 ```
@@ -60,7 +46,7 @@ $ ls -l ~/.git_template/hooks/pre-commit
 -rwxr-xr-x  1 jkinkead  staff  3022 Jan 13 12:39 .git/hooks/pre-commit
 ```
 
-## Enable Autoformatting on Existing Projects
+### Enable Autoformatting on Existing Projects
 
 Autoformatting will be enabled on all new projects by default. To enable on a project that's already been
 initialized, just run `git init` in the repository:
@@ -74,7 +60,7 @@ $ ls -l .git/hooks/pre-commit
 You should be ready to go!
 
 
-## Installing & Enabling on a Single Project
+### Installing & Enabling on a Single Project
 
 If you wish to enable manually on a single project, without having new projects auto-format, all you have to do
 is [download the tar](https://s3-us-west-2.amazonaws.com/ai2-misc/autoformat.tar) and untar it into `.git/hooks`:
