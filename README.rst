@@ -159,7 +159,7 @@ alignParameters
 
 Default: ``false``
 
-Align class/function parameters (modifiers and name, type, and defaults) in three columns.
+Align class/function parameters names in the same column.
 
 For example, if ``false``, then:
 
@@ -177,12 +177,12 @@ If ``true``, then:
 
 .. code:: scala
 
-  class Person(name:             String,
-               age:              Int            = 24,
-               birthdate:        Date,
-               astrologicalSign: String         = "libra",
-               shoeSize:         Int,
-               favoriteColor:    java.awt.Color
+  class Person(name: String,
+               age: Int = 24,
+               birthdate: Date,
+               astrologicalSign: String = "libra",
+               shoeSize: Int,
+               favoriteColor: java.awt.Color
   )
 
 This will also place the "implicit" keyword in parameters on its own line, whenever
@@ -208,6 +208,39 @@ If ``true``, then:
   ): DateTime
 
 This option is disabled if ``indentWithTabs`` is ``true``.
+
+alignParameterTypes
+~~~~~~~~~~~~~~~~~~~
+
+Default: ``true``
+
+If `alignParameters` is set, also align class/function parameter types and defaults.
+
+For example, if ``false``, then:
+
+.. code:: scala
+
+  class Person(name: String,
+    age: Int = 24,
+    birthdate: Date,
+    astrologicalSign: String = "libra",
+    shoeSize: Int,
+    favoriteColor: java.awt.Color
+  )
+
+If ``true``, then:
+
+.. code:: scala
+
+  class Person(name:             String,
+               age:              Int            = 24,
+               birthdate:        Date,
+               astrologicalSign: String         = "libra",
+               shoeSize:         Int,
+               favoriteColor:    java.awt.Color
+  )
+
+This option is does nothing if ``alignParameters`` is ``false``.
 
 firstParameterOnNewline
 ~~~~~~~~~~~~~~~~~~~~~~~

@@ -389,7 +389,8 @@ implicit val formattingPreferences = FormattingPreferences.setPreference(SpacesW
 }
 
 {
-    implicit val formattingPreferences = FormattingPreferences.setPreference(AlignParameters, true)
+    implicit val formattingPreferences =
+      FormattingPreferences.setPreference(AlignParameters, true).setPreference(AlignParameterTypes, true)
 
     // Make sure spacing in same line implicit parameters is preserved
     """class A[T](a: T)(implicit b: B)""" ==>

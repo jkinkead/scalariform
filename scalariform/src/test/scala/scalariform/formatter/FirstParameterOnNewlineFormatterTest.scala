@@ -110,13 +110,15 @@ class FirstParameterOnNewlineFormatterTest extends AbstractFormatterTest {
   }
 
   {
-  implicit val formattingPreferences =
-    FormattingPreferences.setPreference(FirstParameterOnNewline, Preserve).setPreference(AlignParameters, true)
+  implicit val formattingPreferences = FormattingPreferences.setPreference(FirstParameterOnNewline, Preserve)
+      .setPreference(AlignParameters, true)
+      .setPreference(AlignParameterTypes, true)
 
   // Parameters left on the first line should have other parameters aligned to them.
   """def foo(a: Int,
     |    b: String,
-    |c: String): Unit = {}""" ==>
+    |c: String
+    |): Unit = {}""" ==>
   """def foo(a: Int,
     |        b: String,
     |        c: String
@@ -124,28 +126,59 @@ class FirstParameterOnNewlineFormatterTest extends AbstractFormatterTest {
 
   // Parameters on the next line should also be aligned properly.
   """def foo(
-    |a: Int,
-    |    b: String,
-    | c: String): Unit = {}""" ==>
+    |a: Int = 1,
+    |    bb: String,
+    | ccc: String = "A"
+    |): Unit = {}""" ==>
   """def foo(
-    |  a: Int,
-    |  b: String,
-    |  c: String
+    |  a:   Int    = 1,
+    |  bb:  String,
+    |  ccc: String = "A"
     |): Unit = {}"""
   }
 
   {
-  implicit val formattingPreferences =
-    FormattingPreferences.setPreference(FirstParameterOnNewline, Prevent).setPreference(AlignParameters, true)
+  implicit val formattingPreferences = FormattingPreferences.setPreference(FirstParameterOnNewline, Prevent)
+      .setPreference(AlignParameters, true)
+      .setPreference(AlignParameterTypes, true)
 
   // Parameters on the next line should be pulled to the first line, and aligned.
   """def foo(
     |a: Int,
-    |    b: String,
-    | c: String): Unit = {}""" ==>
-  """def foo(a: Int,
-    |        b: String,
-    |        c: String
+    |    bb: String,
+    | ccc: String
+    |): Unit = {}""" ==>
+  """def foo(a:   Int,
+    |        bb:  String,
+    |        ccc: String
+    |): Unit = {}"""
+  }
+
+  {
+    implicit val formattingPreferences = FormattingPreferences.setPreference(FirstParameterOnNewline, Preserve)
+      .setPreference(AlignParameters, true)
+      .setPreference(AlignParameterTypes, false)
+
+  // Parameters left on the first line should have other parameters aligned to them.
+  """def foo(a: Int = 1,
+    |    bb: String,
+    |ccc: String = "2"
+    |): Unit = {}""" ==>
+  """def foo(a: Int = 1,
+    |        bb: String,
+    |        ccc: String = "2"
+    |): Unit = {}"""
+
+  // Parameters on the next line should also be aligned properly.
+  """def foo(
+    |a: Int = 1,
+    |    bb: String,
+    | ccc: String = "A"
+    |): Unit = {}""" ==>
+  """def foo(
+    |  a: Int = 1,
+    |  bb: String,
+    |  ccc: String = "A"
     |): Unit = {}"""
   }
 

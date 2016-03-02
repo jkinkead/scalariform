@@ -1259,11 +1259,13 @@ trait ExprFormatter { self: HasFormattingPreferences with AnnotationFormatter wi
           // Indent prefixes (annotations, modifiers, and id) if alignParameters is enabled
           alignFirstParam(firstParam)
 
-          // Indent Type
-          indentType(firstParam, lengths)
+          if (formattingPreferences(AlignParameterTypes)) {
+            // Indent Type
+            indentType(firstParam, lengths)
 
-          // Indent Default
-          indentDefault(firstParam, lengths)
+            // Indent Default
+            indentDefault(firstParam, lengths)
+          }
         case None ⇒
           alignFirstParam(firstParam)
       }
@@ -1278,11 +1280,13 @@ trait ExprFormatter { self: HasFormattingPreferences with AnnotationFormatter wi
           // Indent prefixes (annotations, modifiers, and id)
           alignOtherParams(firstToken)
 
-          // Indent Type
-          indentType(param, maxSectionLengths)
+          if (formattingPreferences(AlignParameterTypes)) {
+            // Indent Type
+            indentType(param, maxSectionLengths)
 
-          // Indent Default
-          indentDefault(param, maxSectionLengths)
+            // Indent Default
+            indentDefault(param, maxSectionLengths)
+          }
 
           formatResult ++= format(param)(paramFormatterState)
         }
